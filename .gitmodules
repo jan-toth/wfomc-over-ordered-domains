@@ -1,0 +1,6 @@
+[submodule "experiments/ganak"]
+	path = experiments/ganak
+	url = https://github.com/meelgroup/ganak
+[submodule "experiments/d4"]
+	path = experiments/d4
+	url = https://github.com/crillab/d4
