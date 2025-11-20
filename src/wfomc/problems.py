@@ -46,6 +46,15 @@ class WFOMCProblem(object):
 
     def contain_circular_predecessor_axiom(self) -> bool:
         return Pred('CIRCULAR_PRED', 2) in self.sentence.preds()
+    
+    def contain_successor_axiom(self) -> bool:
+        return Pred('SUC', 2) in self.sentence.preds()
+    
+    def contain_first_predicate(self) -> bool:
+        return Pred('LAST', 1) in self.sentence.preds()
+    
+    def contain_last_predicate(self) -> bool:
+        return Pred('FIRST', 1) in self.sentence.preds()
 
     def contain_unary_evidence(self) -> bool:
         return self.unary_evidence is not None and len(self.unary_evidence) > 0

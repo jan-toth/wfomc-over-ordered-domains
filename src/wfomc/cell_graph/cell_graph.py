@@ -25,7 +25,11 @@ class CellGraph(object):
     def __init__(self, formula: QFFormula,
                  get_weight: Callable[[Pred], tuple[RingElement, RingElement]],
                  leq_pred: Pred = None,
-                 predecessor_preds: dict[int, Pred] = None):
+                 predecessor_preds: dict[int, Pred] = None,
+                 successor_pred: Pred = None,
+                 domain_size = None, 
+                 first_pred = None,
+                 last_pred = None):
         """
         Cell graph that handles cells (1-types) and the WMC between them
 
@@ -38,6 +42,7 @@ class CellGraph(object):
                                   tuple[RingElement, RingElement]] = get_weight
         self.leq_pred: Pred = leq_pred
         self.predecessor_preds: dict[int, Pred] = predecessor_preds
+        self.successor_pred = successor_pred
         self.preds: tuple[Pred] = tuple(self.formula.preds())
         logger.debug('prednames: %s', self.preds)
 
@@ -87,10 +92,29 @@ class CellGraph(object):
                         map(lambda x: ~x(b, a) & ~x(a, b),
                             self.predecessor_preds.values())
                     )
+            if self.successor_pred is not None:
+                self.gnd_formula_cc = self.gnd_formula_cc & \
+                    (~self.successor_pred(c, c))
+                #type 1 - neither SUC(a,b) nor SUC(b, a)
+                self.gnd_formula_ab_with_suc_type_1 = self.gnd_formula_ab & \
+                    (~self.successor_pred(a, b)) & \
+                    (~self.successor_pred(b, a))
+                #type 2 - SUC(b, a) <-> LEQ(b, a)
+                self.gnd_formula_ab_with_suc_type_2 = self.gnd_formula_ab & \
+                    (~self.successor_pred(a, b)) & \
+                    (self.successor_pred(b, a))
+                #type 3 - SUC(a, b) <-> LEQ(b, a)
+                self.gnd_formula_ab_with_suc_type_3 = self.gnd_formula_ab & \
+                    (self.successor_pred(a, b)) & \
+                    (~self.successor_pred(b, a))
         logger.info('ground a b: %s', self.gnd_formula_ab)
         logger.info('ground c: %s', self.gnd_formula_cc)
         if self.predecessor_preds is not None:
             logger.info(f'ground a, b with predecessor: {self.gnd_formula_ab_with_preds}')
+        if self.successor_pred is not None:
+            logger.info(f'ground a, b with successor type 1: {self.gnd_formula_ab_with_suc_type_1}')
+            logger.info(f'ground a, b with successor type 2: {self.gnd_formula_ab_with_suc_type_2}')
+            logger.info(f'ground a, b with successor type 3: {self.gnd_formula_ab_with_suc_type_3}')
 
         # build cells
         self.cells: list[Cell] = self._build_cells()
@@ -109,6 +133,19 @@ class CellGraph(object):
             ] = dict(
                 (idx, self._build_two_tables(gnd_formula))
                 for idx, gnd_formula in self.gnd_formula_ab_with_preds.items()
+            )
+        if self.successor_pred is not None:
+            self.two_tables_with_suc_type_1: dict[tuple[Cell, Cell],
+                                            TwoTable] = self._build_two_tables(
+                self.gnd_formula_ab_with_suc_type_1
+            )
+            self.two_tables_with_suc_type_2: dict[tuple[Cell, Cell],
+                                            TwoTable] = self._build_two_tables(
+                self.gnd_formula_ab_with_suc_type_2
+            )
+            self.two_tables_with_suc_type_3: dict[tuple[Cell, Cell],
+                                            TwoTable] = self._build_two_tables(
+                self.gnd_formula_ab_with_suc_type_3
             )
 
     def _ground_on_tuple(self, formula: QFFormula,
@@ -208,6 +245,21 @@ class CellGraph(object):
     ) -> RingElement:
         self._check_existence(cells)
         return self.two_tables_with_preds[index].get(cells).get_weight(evidences)
+    
+    @functools.lru_cache(maxsize=None, typed=True)
+    def get_two_table_with_suc_weight(self, cells: tuple[Cell, Cell],
+                             evidences: frozenset[AtomicFormula] = None, suc_type: int = 1) -> RingElement:
+        '''SUC type refers to relation of SUC/2 and LEQ/2
+        type 1 - neither SUC(a, b) nor SUC(b, a)
+        type 2 - SUC(b, a) <-> LEQ(b, a)
+        type 3 - SUC(a, b) <-> LEQ(b, a)
+        '''
+        self._check_existence(cells)
+        if suc_type == 1:
+            return self.two_tables_with_suc_type_1.get(cells).get_weight(evidences)
+        elif suc_type == 2:
+            return self.two_tables_with_suc_type_2.get(cells).get_weight(evidences)
+        return self.two_tables_with_suc_type_3.get(cells).get_weight(evidences)
 
     def get_all_weights(self) -> tuple[list[RingElement], list[RingElement]]:
         cell_weights = []
@@ -769,17 +821,22 @@ def build_cell_graphs(formula: QFFormula,
                                            tuple[RingElement, RingElement]],
                       leq_pred: Pred = None,
                       predecessor_preds: dict[int, Pred] = None,
+                      successor_pred: Pred = None,
                       optimized: bool = False,
                       domain_size: int = 0,
                       modified_cell_symmetry: bool = False,
-                      partition_constraint: PartitionConstraint = None) \
+                      partition_constraint: PartitionConstraint = None,
+                      first_pred: Pred = None,
+                      last_pred: Pred = None) \
         -> Generator[tuple[CellGraph, RingElement]]:
     nullary_atoms = [atom for atom in formula.atoms() if atom.pred.arity == 0]
     if len(nullary_atoms) == 0:
         logger.info('No nullary atoms found, building a single cell graph')
         if not optimized:
             yield CellGraph(
-                formula, get_weight, leq_pred, predecessor_preds
+                formula, get_weight, leq_pred=leq_pred, predecessor_preds=predecessor_preds, \
+                successor_pred=successor_pred, first_pred=first_pred, last_pred=last_pred, \
+                domain_size=domain_size
             ), Rational(1, 1)
         else:
             if partition_constraint is None:
