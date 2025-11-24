@@ -1,0 +1,11 @@
+\forall X: (\forall Y: (  (IS_A(X) & IS_B(Y)) -> LEQ(X,Y)) ) 
+
+
+domain = {la,lb,other}
+
+IS_A(la),~IS_A(lb),~IS_A(other),
+~IS_B(la),IS_B(lb),~IS_B(other)
+
+
+
+

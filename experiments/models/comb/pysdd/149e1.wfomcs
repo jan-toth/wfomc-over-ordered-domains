@@ -1,0 +1,18 @@
+\forall X: (\forall Y: (((p_table_NEXT_TO(X,Y) <-> (p_table_PRED(X,Y) | p_table_PRED(Y,X))) & (p_table_PRED(X,Y) <-> (CIRCULAR_PRED(X,Y) & p_set_aux_155(X) & p_set_aux_155(Y))) & ((p_set_Democrats(X) & p_set_Democrats(Y)) -> ~(p_table_NEXT_TO(X,Y))) & ((p_set_Republicans(X) & p_set_Republicans(Y)) -> ~(p_table_NEXT_TO(X,Y))) & ((p_set_aux_155(X) & ~(p_set_aux_155(Y))) -> LEQ(X,Y)))))
+& \forall X:( ~(p_set_Republicans(X) & p_set_Democrats(X)))
+
+domain = {s1, s2, s3, s4, s5, s6, s7, s8, s9, s10}
+
+1 |p_set_Democrats| = 5
+1 |p_set_Republicans| = 5 
+
+p_set_aux_155(s1),
+p_set_aux_155(s2),
+p_set_aux_155(s3),
+p_set_aux_155(s4),
+p_set_aux_155(s5),
+p_set_aux_155(s6),
+p_set_aux_155(s7),
+p_set_aux_155(s8),
+p_set_aux_155(s9),
+p_set_aux_155(s10)

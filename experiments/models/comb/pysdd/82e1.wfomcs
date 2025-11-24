@@ -1,0 +1,11 @@
+\forall X: (\forall Y: (((p_table_NEXT_TO(X,Y) <-> (p_table_PRED(X,Y) | p_table_PRED(Y,X))) & ((p_entity_John(X) & p_entity_Sam(Y)) -> p_table_NEXT_TO(X,Y)) & (p_table_PRED(X,Y) <-> (CIRCULAR_PRED(X,Y) & p_set_people(X) & p_set_people(Y))) & ((p_set_people(X) & ~(p_set_people(Y))) -> LEQ(X,Y)))))
+& \forall X:( ~(p_entity_Sam(X) & p_entity_John(X)))
+
+
+domain = {f1, f2, f3, f4, f5, f6}
+
+|p_entity_John| = 1
+|p_entity_Sam| = 1
+
+p_set_people(f1),p_set_people(f2),p_set_people(f3),p_set_people(f4),
+p_set_people(f5),p_set_people(f6)

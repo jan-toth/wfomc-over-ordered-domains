@@ -1,0 +1,10 @@
+\forall X: (\forall Y: (((p_arrangement_NEXT_TO(X,Y) <-> (p_arrangement_PRED(X,Y) | p_arrangement_PRED(Y,X))) & ((p_entity_car_key(Y) & p_entity_house_key(X)) -> p_arrangement_NEXT_TO(X,Y)) & (p_arrangement_PRED(X,Y) <-> (CIRCULAR_PRED(X,Y) & p_set_keys(X) & p_set_keys(Y))) & ((p_set_keys(X) & ~(p_set_keys(Y))) -> LEQ(X,Y)))))
+& \forall X:( ~(p_entity_house_key(X) & p_entity_car_key(X)))
+
+
+domain = {k1, k2, k3, k4, k5}
+
+|p_entity_house_key|=1
+|p_entity_car_key|=1
+
+p_set_keys(k1),p_set_keys(k2),p_set_keys(k3),p_set_keys(k4),p_set_keys(k5)

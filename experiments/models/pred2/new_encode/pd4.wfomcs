@@ -1,0 +1,3 @@
+\forall X: (~PRED2(X,X))
+
+domain = 4

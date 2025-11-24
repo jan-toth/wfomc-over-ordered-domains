@@ -1,0 +1,15 @@
+\forall X: (\forall Y: (((p_row_NEXT_TO(X,Y) <-> (p_row_PRED(X,Y) | p_row_PRED(Y,X))) & (p_row_PRED(X,Y) <-> (PRED(X,Y) & p_set_people(X) & p_set_people(Y))) & ((p_entity_Paul(Y) & p_entity_Wilma(X)) -> ~(p_row_NEXT_TO(X,Y))) & ((p_set_people(X) & ~(p_set_people(Y))) -> LEQ(X,Y)))))
+& \forall X:( ~(p_entity_Paul(X) & p_entity_Wilma(X)))
+
+domain = {k1, k2, k3, k4, k5, k6, k7}
+
+|p_entity_Wilma|=1
+|p_entity_Paul|=1
+
+p_set_people(k1),
+p_set_people(k2),
+p_set_people(k3),
+p_set_people(k4),
+p_set_people(k5),
+p_set_people(k6),
+p_set_people(k7)

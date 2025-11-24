@@ -1,0 +1,15 @@
+\forall X: (\forall Y: (((p_shelf_NEXT_TO(X,Y) <-> (p_shelf_PRED(X,Y) | p_shelf_PRED(Y,X))) & (p_shelf_PRED(X,Y) <-> (PRED(X,Y) & p_set_books(X) & p_set_books(Y))) & ((p_entity_math1(X) & p_entity_math2(Y)) -> ~(p_shelf_NEXT_TO(X,Y))) & ((p_set_books(X) & ~(p_set_books(Y))) -> LEQ(X,Y)))))
+& \forall X:( ~(p_entity_math1(X) & p_entity_math2(X)))
+
+
+domain = {b1, b2, b3, b4, b5, b6}
+
+|p_entity_math1|=1
+|p_entity_math2|=1
+
+p_set_books(b1),
+p_set_books(b2),
+p_set_books(b3),
+p_set_books(b4),
+p_set_books(b5),
+p_set_books(b6)

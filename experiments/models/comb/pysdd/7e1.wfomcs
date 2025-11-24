@@ -1,0 +1,14 @@
+\forall X: (\forall Y: ((  (~(p_english_books_first(X)) | (p_set_english_books(X) & (p_set_english_books(Y) -> ~(PRED(Y,X))))) 
+                         & (~(p_math_books_first(X))    | (p_set_math_books(X)    & (p_set_math_books(Y)    -> ~(PRED(Y,X))))) )))
+
+
+& \forall X: (\exists Y: ((p_english_books_first(X) | ~((p_set_english_books(X) & (p_set_english_books(Y) -> ~(PRED(Y,X)))  )))))
+& \forall X: (\exists Y: ((p_math_books_first(X)    | ~((p_set_math_books(X) &  (p_set_math_books(Y) -> ~(PRED(Y,X)) )  )))))
+& \forall X: (~(p_set_math_books(X) & p_set_english_books(X)))
+
+domain = {b1, b2, b3, b4, b5, b6, b7, b8}
+
+1 |p_english_books_first| = 1
+1 |p_math_books_first| = 1
+1 |p_set_english_books| = 5
+1 |p_set_math_books| = 3

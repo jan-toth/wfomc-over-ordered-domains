@@ -1,0 +1,11 @@
+\forall X: (\forall Y: (((p_chairs_PRED(X,Y) <-> (PRED(X,Y) & p_set_aux_64(X) & p_set_aux_64(Y))) & ((p_set_aux_64(X) & ~(p_set_aux_64(Y))) -> LEQ(X,Y)) & (~(p_dems_first(X)) | (p_set_dems(X) & (p_set_dems(Y) -> ~(p_chairs_PRED(Y,X))))))))
+& \forall X: (\exists Y: ((p_dems_first(X) | ~((p_set_dems(X) & (p_set_dems(Y) -> ~(p_chairs_PRED(Y,X))))))))
+
+domain = {s1, s2, s3, s4, s5, s6, s7, s8, s9}
+
+1 |p_dems_first| <= 1
+1 |p_set_dems| = 4
+
+p_set_aux_64(s1), p_set_aux_64(s2), p_set_aux_64(s3), 
+p_set_aux_64(s4), p_set_aux_64(s5), p_set_aux_64(s6), 
+p_set_aux_64(s7), p_set_aux_64(s8), p_set_aux_64(s9)

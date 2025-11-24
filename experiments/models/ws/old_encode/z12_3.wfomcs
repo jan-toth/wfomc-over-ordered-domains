@@ -1,0 +1,13 @@
+\forall X: (~Perm(X,X)) &
+\forall X: (~E(X,X)) &
+\forall X: (\exists Y: (Perm(X, Y))) &
+\forall Y: (\exists X: (Perm(X, Y))) &
+\forall X: (\forall Y: (Pred(X,Y) -> Perm(X,Y))) &
+\forall X: (\forall Y: (Pred(X,Y) -> LEQ(X,Y))) &
+\forall X: (\forall Y: (Perm(X,Y) -> E(X,Y))) &
+\forall X: (\forall Y: (E(X,Y) -> E(Y,X)))
+
+domain = 12
+|Perm| = 12
+|Pred| = 11
+|E| = 36

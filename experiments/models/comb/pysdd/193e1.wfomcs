@@ -1,0 +1,20 @@
+\forall X: (\forall Y: (((p_number_PRED(X,Y) <-> (PRED(X,Y) & p_set_aux_169(X) & p_set_aux_169(Y))) & ((p_set_aux_169(X) & ~(p_set_aux_169(Y))) -> LEQ(X,Y)) & ((p_set_evens(X) & p_set_evens(Y)) -> ~(p_number_PRED(X,Y))) & ((p_set_odds(X) & p_set_odds(Y)) -> ~(p_number_PRED(X,Y))))))
+& \forall X:( ~(p_set_evens(X) & p_set_odds(X)))
+
+domain = {c1, c2, c3, c4, c5, c6, c7, c8, c9}
+
+|p_set_evens|=4
+|p_set_odds|=5
+
+
+p_set_aux_169(c1),
+p_set_aux_169(c2),
+p_set_aux_169(c3),
+p_set_aux_169(c4),
+p_set_aux_169(c5),
+p_set_aux_169(c6),
+p_set_aux_169(c7),
+p_set_aux_169(c8),
+p_set_aux_169(c9)
+
+

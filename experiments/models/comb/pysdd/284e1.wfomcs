@@ -1,0 +1,14 @@
+\forall X: (\forall Y: (((p_seating_NEXT_TO(X,Y) <-> (p_seating_PRED(X,Y) | p_seating_PRED(Y,X))) & (p_seating_PRED(X,Y) <-> (CIRCULAR_PRED(X,Y) & p_set_people(X) & p_set_people(Y))) & ((p_set_not_next_to(X) & p_set_not_next_to(Y)) -> ~(p_seating_NEXT_TO(X,Y))) & ((p_set_people(X) & ~(p_set_people(Y))) -> LEQ(X,Y)))))
+
+domain = {p1, p2, p3, p4, p5, p6, p7, p8}
+
+|p_set_not_next_to| = 3
+
+p_set_people(p1),
+p_set_people(p2),
+p_set_people(p3),
+p_set_people(p4),
+p_set_people(p5),
+p_set_people(p6),
+p_set_people(p7),
+p_set_people(p8)
