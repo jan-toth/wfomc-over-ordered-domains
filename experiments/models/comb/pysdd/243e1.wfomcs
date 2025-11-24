@@ -1,0 +1,6 @@
+\forall X: (\forall Y:  (p_sons_pred_sons(X,Y) <-> (PRED(X,Y) & p_set_sons(X) & p_set_sons(Y))) )
+
+domain = {k1, k2, k3, k4, k5, k6, k7}
+
+|p_sons_pred_sons| >= 1
+|p_set_sons| = 4

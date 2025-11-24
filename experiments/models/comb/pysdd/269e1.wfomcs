@@ -1,0 +1,20 @@
+\forall X: (\forall Y: (((p_arrangement_NEXT_TO(X,Y) <-> (p_arrangement_PRED(X,Y) | p_arrangement_PRED(Y,X))) & ((p_entity_chief(X) & p_entity_wife(Y)) -> p_arrangement_NEXT_TO(X,Y)) & ((p_entity_chief(Y) & p_entity_mother(X)) -> p_arrangement_NEXT_TO(X,Y)) & (p_arrangement_PRED(X,Y) <-> (CIRCULAR_PRED(X,Y) & p_set_tribe(X) & p_set_tribe(Y))) & ((p_set_tribe(X) & ~(p_set_tribe(Y))) -> LEQ(X,Y)))))
+& \forall X:( ~(p_entity_chief(X) & p_entity_wife(X)))
+& \forall X:( ~(p_entity_chief(X) & p_entity_mother(X)))
+& \forall X:( ~(p_entity_mother(X) & p_entity_wife(X)))
+
+
+domain = {p1, p2, p3, p4, p5, p6, p7, p8}
+
+|p_entity_chief|=1 
+|p_entity_mother|=1
+|p_entity_wife|=1
+
+p_set_tribe(p1),
+p_set_tribe(p2),
+p_set_tribe(p3),
+p_set_tribe(p4),
+p_set_tribe(p5),
+p_set_tribe(p6),
+p_set_tribe(p7),
+p_set_tribe(p8)

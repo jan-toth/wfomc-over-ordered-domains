@@ -1,0 +1,11 @@
+\forall X: (\forall Y: (((p_row_NEXT_TO(X,Y) <-> (p_row_PRED(X,Y) | p_row_PRED(Y,X))) & (p_row_PRED(X,Y) <-> (PRED(X,Y) & p_set_aux_96(X) & p_set_aux_96(Y))) & ((p_set_aux_96(X) & ~(p_set_aux_96(Y))) -> LEQ(X,Y)) & ((p_set_green(X) & p_set_red(Y)) -> ~(p_row_NEXT_TO(X,Y))))))
+& \forall X:( ~(p_set_green(X) & p_set_red(X)))
+
+
+domain = {f1, f2, f3, f4, f5, f6}
+
+|p_set_green|=2
+|p_set_red|=3
+
+p_set_aux_96(f1),p_set_aux_96(f2), p_set_aux_96(f3), 
+p_set_aux_96(f4),p_set_aux_96(f5), p_set_aux_96(f6)

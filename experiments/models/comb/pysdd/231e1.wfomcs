@@ -1,0 +1,17 @@
+\forall X: (\forall Y: (((p_row_PRED(X,Y) <-> (PRED(X,Y) & p_set_people(X) & p_set_people(Y))) & ((p_set_people(X) & ~(p_set_people(Y))) -> LEQ(X,Y)) & (~(p_not_consecutive_first(X)) | (p_set_not_consecutive(X) & (p_set_not_consecutive(Y) -> ~(p_row_PRED(Y,X))))))))
+& \forall X: (\exists Y: ((p_not_consecutive_first(X) | ~((p_set_not_consecutive(X) & (p_set_not_consecutive(Y) -> ~(p_row_PRED(Y,X))))))))
+
+domain = {p1, p2, p3, p4, p5, p6, p7, p8}
+
+|p_not_consecutive_first| >= 1
+|p_set_not_consecutive| = 3
+
+p_set_people(p1),
+p_set_people(p2),
+p_set_people(p3),
+p_set_people(p4),
+p_set_people(p5),
+p_set_people(p6),
+p_set_people(p7),
+p_set_people(p8)
+

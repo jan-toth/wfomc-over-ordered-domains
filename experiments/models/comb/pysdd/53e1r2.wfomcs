@@ -1,0 +1,24 @@
+\forall X: (\forall Y: (((p_table_PRED(X,Y) <-> (CIRCULAR_PRED(X,Y) & p_set_aux_84(X) & p_set_aux_84(Y))) & ((p_set_aux_84(X) & ~(p_set_aux_84(Y))) -> LEQ(X,Y)) & (~(p_Democrats_first(X)) | (p_set_Democrats(X) & (p_set_Democrats(Y) -> ~(p_table_PRED(Y,X))))) & (~(p_Republicans_first(X)) | (p_set_Republicans(X) & (p_set_Republicans(Y) -> ~(p_table_PRED(Y,X))))))))
+& \forall X: (\exists Y: ((p_Democrats_first(X) | ~((p_set_Democrats(X) & (p_set_Democrats(Y) -> ~(p_table_PRED(Y,X))))))))
+& \forall X: (\exists Y: ((p_Republicans_first(X) | ~((p_set_Republicans(X) & (p_set_Republicans(Y) -> ~(p_table_PRED(Y,X))))))))
+& \forall X:( ~(p_set_Republicans(X) & p_set_Democrats(X)))
+
+
+domain = {f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11}
+
+1 |p_Democrats_first| <= 1
+1 |p_Republicans_first| <= 1
+1 |p_set_Republicans| = 5
+1 |p_set_Democrats| = 5
+
+p_set_aux_84(f1),
+p_set_aux_84(f2),
+p_set_aux_84(f3),
+p_set_aux_84(f4),
+p_set_aux_84(f5),
+p_set_aux_84(f6),
+p_set_aux_84(f7),
+p_set_aux_84(f8),
+p_set_aux_84(f9),
+p_set_aux_84(f10),
+p_set_aux_84(f11)

@@ -1,0 +1,28 @@
+\forall X: (\forall Y: (((p_arrangement_PRED(X,Y) <-> (PRED(X,Y) & p_set_aux_137(X) & p_set_aux_137(Y))) & ((p_set_aux_137(X) & ~(p_set_aux_137(Y))) -> LEQ(X,Y)) & (~(p_cats_first(X)) | (p_set_cats(X) & (p_set_cats(Y) -> ~(p_arrangement_PRED(Y,X))))) & (~(p_chickens_first(X)) | (p_set_chickens(X) & (p_set_chickens(Y) -> ~(p_arrangement_PRED(Y,X))))) & (~(p_dogs_first(X)) | (p_set_dogs(X) & (p_set_dogs(Y) -> ~(p_arrangement_PRED(Y,X))))))))
+& \forall X: (\exists Y: ((p_dogs_first(X) | ~((p_set_dogs(X) & (p_set_dogs(Y) -> ~(p_arrangement_PRED(Y,X))))))))
+& \forall X: (\exists Y: ((p_cats_first(X) | ~((p_set_cats(X) & (p_set_cats(Y) -> ~(p_arrangement_PRED(Y,X))))))))
+& \forall X: (\exists Y: ((p_chickens_first(X) | ~((p_set_chickens(X) & (p_set_chickens(Y) -> ~(p_arrangement_PRED(Y,X))))))))
+& \forall X:( ~(p_set_cats(X) & p_set_chickens(X)))
+& \forall X:( ~(p_set_cats(X) & p_set_dogs(X)))
+& \forall X:( ~(p_set_chickens(X) & p_set_dogs(X)))
+
+
+
+domain = {a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11}
+
+1 |p_dogs_first| <= 1
+1 |p_cats_first| <= 1
+1 |p_chickens_first| <= 1
+1 |p_set_cats| = 5
+1 |p_set_chickens| = 4 
+1 |p_set_dogs| = 2
+
+p_set_aux_137(a1),
+p_set_aux_137(a2),
+p_set_aux_137(a3),
+p_set_aux_137(a4),
+p_set_aux_137(a5),
+p_set_aux_137(a6),
+p_set_aux_137(a7),
+p_set_aux_137(a8),
+p_set_aux_137(a9)

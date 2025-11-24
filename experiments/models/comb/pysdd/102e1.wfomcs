@@ -1,0 +1,26 @@
+\forall X: (\forall Y: (((p_row_PRED(X,Y) <-> (PRED(X,Y) & p_set_aux_119(X) & p_set_aux_119(Y))) & ((p_set_aux_119(X) & ~(p_set_aux_119(Y))) -> LEQ(X,Y)) & (~(p_Cubs_first(X)) | (p_set_Cubs(X) & (p_set_Cubs(Y) -> ~(p_row_PRED(Y,X))))) & (~(p_Red_Sox_first(X)) | (p_set_Red_Sox(X) & (p_set_Red_Sox(Y) -> ~(p_row_PRED(Y,X))))) & (~(p_Yankees_first(X)) | (p_set_Yankees(X) & (p_set_Yankees(Y) -> ~(p_row_PRED(Y,X))))))))
+& \forall X: (\exists Y: ((p_Yankees_first(X) | ~((p_set_Yankees(X) & (p_set_Yankees(Y) -> ~(p_row_PRED(Y,X))))))))
+& \forall X: (\exists Y: ((p_Red_Sox_first(X) | ~((p_set_Red_Sox(X) & (p_set_Red_Sox(Y) -> ~(p_row_PRED(Y,X))))))))
+& \forall X: (\exists Y: ((p_Cubs_first(X) | ~((p_set_Cubs(X) & (p_set_Cubs(Y) -> ~(p_row_PRED(Y,X))))))))
+& \forall X:( ~(p_set_Red_Sox(X) & p_set_Yankees(X)))
+& \forall X:( ~(p_set_Red_Sox(X) & p_set_Cubs(X)))
+& \forall X:( ~(p_set_Cubs(X) & p_set_Yankees(X)))
+
+
+domain = {s1, s2, s3, s4, s5, s6, s7, s8}
+
+1 |p_Yankees_first| <= 1
+1 |p_Red_Sox_first| <= 1
+1 |p_Cubs_first| <= 1
+1 |p_set_Cubs| = 3 
+1 |p_set_Red_Sox| = 3
+1 |p_set_Yankees| = 2
+
+p_set_aux_119(s1),
+p_set_aux_119(s2),
+p_set_aux_119(s3),
+p_set_aux_119(s4),
+p_set_aux_119(s5),
+p_set_aux_119(s6),
+p_set_aux_119(s7),
+p_set_aux_119(s8)

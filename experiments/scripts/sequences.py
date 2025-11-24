@@ -1,4 +1,3 @@
-import collections.abc
 import os
 
 from contexttimer import Timer
@@ -19,7 +18,8 @@ HEAD_MIDDLE_TAIL = r"""\forall X: (\forall Y: ( (T(X) & LEQ(X, Y) -> T(Y)) &
                                                 )
                                     )"""
 
-OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results")
+# experiments/results
+OUTPUT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "results")
 
 
 def run(input, domain_sizes, out_file="seq.csv"):
@@ -52,5 +52,5 @@ if __name__ == "__main__":
     if not os.path.exists(OUTPUT_DIR):
         os.mkdir(OUTPUT_DIR)
 
-    run(HEAD_TAIL, 800, "seq_head_tail.csv")
-    # run(HEAD_MIDDLE_TAIL, 800, "seq_head_middle_tail.csv")
+    run(HEAD_TAIL, 100, "seq_head_tail.csv")
+    run(HEAD_MIDDLE_TAIL, 100, "seq_head_middle_tail.csv")

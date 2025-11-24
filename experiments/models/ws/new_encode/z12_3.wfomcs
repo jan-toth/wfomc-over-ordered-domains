@@ -1,0 +1,6 @@
+\forall X: (~E(X,X)) &
+\forall X: (\forall Y: (CIRCULAR_PRED(X,Y) -> E(X,Y))) &
+\forall X: (\forall Y: (E(X,Y) -> E(Y,X)))
+
+domain = 12
+|E| = 36

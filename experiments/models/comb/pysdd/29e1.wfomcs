@@ -1,0 +1,13 @@
+\forall X: (\forall Y: ((((p_set_math_books(X) & p_set_physics_books(Y)) -> p_arrangement_LEQ(X,Y)) & (p_arrangement_LEQ(X,Y) <-> (LEQ(X,Y) & p_set_aux_29(X) & p_set_aux_29(Y))) & (p_arrangement_PRED(X,Y) <-> (PRED(X,Y) & p_set_aux_29(X) & p_set_aux_29(Y))) & ((p_set_aux_29(X) & ~(p_set_aux_29(Y))) -> LEQ(X,Y)) & (~(p_math_books_first(X)) | (p_set_math_books(X) & (p_set_math_books(Y) -> ~(p_arrangement_PRED(Y,X))))))))
+& \forall X: (\exists Y: ((p_math_books_first(X) | ~((p_set_math_books(X) & (p_set_math_books(Y) -> ~(p_arrangement_PRED(Y,X))))))))
+& \forall X:( ~(p_set_math_books(X) & p_set_physics_books(X)))
+
+domain = {b1, b2, b3, b4, b5, b6, b7}
+
+1 |p_math_books_first| <= 1
+1 |p_set_math_books| = 2
+1 |p_set_physics_books| = 1
+
+
+p_set_aux_29(b1),p_set_aux_29(b2),p_set_aux_29(b3),p_set_aux_29(b4),
+p_set_aux_29(b5),p_set_aux_29(b6),p_set_aux_29(b7)

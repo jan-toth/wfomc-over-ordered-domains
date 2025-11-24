@@ -1,0 +1,13 @@
+~Perm(X,X).
+\forall X: (\exists Y: (Perm(X, Y))).
+\forall Y: (\exists X: (Perm(X, Y))).
+Pred(X,Y) -> Perm(X,Y).
+Pred(X,Y) -> LEQ(X,Y).
+ExactlyOne[Sun, Rain].
+0.5 S(X) -> Rain(X)
+Sun(X) & Pred(X,Y) -> Rain(X).
+1 S(X) & Pred(X,Y) -> S(Y)
+
+domain = 10
+|Perm| = 10
+|Pred| = 9
