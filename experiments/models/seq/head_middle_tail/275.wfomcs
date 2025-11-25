@@ -1,0 +1,6 @@
+\forall X: (\forall Y: ( (T(X) & LEQ(X, Y) -> T(Y)) & 
+                                                (H(Y) & LEQ(X, Y) -> H(X)) & 
+                                                (~H(X) | ~T(X))
+                                                )
+                                    )
+domain = 275
