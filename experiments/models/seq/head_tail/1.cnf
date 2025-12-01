@@ -1,0 +1,6 @@
+c LEQ(domain0,domain0) T(domain0)
+c 1 2
+p cnf 2 3
+2 0
+-1 0
+-2 0

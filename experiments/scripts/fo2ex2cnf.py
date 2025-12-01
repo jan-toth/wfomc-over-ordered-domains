@@ -20,7 +20,8 @@ def parse_args():
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument('--input', '-i', type=str, required=True, help='sentence file')
-    parser.add_argument('--linearencode', '-e', type=int, required=False, help='linear order and predcessor encode method 0-disable 1-hard encode 2-TODO first order encode',default=0 )
+    parser.add_argument('--output', '-o', type=str, required=False, help='output file')
+    parser.add_argument('--linearencode', '-e', type=int, required=False, help='linear order and predcessor encode method 0-disable 1-hard encode 2-TODO first order encode 3-Vasek\'s encoding',default=0 )
     args = parser.parse_args()
     return args
 
@@ -433,7 +434,7 @@ if __name__ == "__main__":
     vstr = f'c {" ".join([str(v) for v in vlist])}\n'
 
     #cnf_file_path = os.path.join(sentence_dir, f'{os.path.splitext(sentence_base)[0] }.cnf')
-    cnf_file_path = f'tmp/{os.path.splitext(sentence_base)[0] }.cnf'
+    cnf_file_path = f'tmp/{os.path.splitext(sentence_base)[0] }.cnf' if args.output is None else args.output
 
     cnf_file = open(cnf_file_path, 'w')
     cnf_file.write(kstr)
