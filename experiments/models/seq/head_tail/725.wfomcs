@@ -1,3 +1,2 @@
 \forall X: (\forall Y: (T(X) & LEQ(X, Y) -> T(Y)))
-
-domain = 1
+domain = 725
