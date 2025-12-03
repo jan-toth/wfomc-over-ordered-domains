@@ -58,7 +58,7 @@ def wfomc(problem: WFOMCProblem, algo: Algo = Algo.STANDARD,
             res= incremental_multiple_orders_wfomc(context, problem.circle_len)
         elif algo == Algo.RECURSIVE:
             res = recursive_wfomc(context)
-    res = context.decode_result(res, lof)
+        res = context.decode_result(res, lof)
     logger.info('WFOMC time: %s', t.elapsed)
     return res
 
