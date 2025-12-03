@@ -65,10 +65,10 @@ def incremental_multiple_orders_wfomc(context: WFOMCContext, t) -> RingElement:
                     last_cells.append((i, cell))
                 else:
                     body_cells.append((i, cell))
-        elif first_pred is not None:
-            first_cells = [(i, cell) for i, cell in enumerate(cells)]
+        elif last_pred is not None:
+            last_cells = [(i, cell) for i, cell in enumerate(cells)]
 
-        if successor_pred is not None and first_pred is not None:
+        if successor_pred is not None and last_pred is not None:
             table = dict(
                 (
                     (
@@ -77,9 +77,9 @@ def incremental_multiple_orders_wfomc(context: WFOMCContext, t) -> RingElement:
                     ),
                     cell_graph.get_cell_weight(cell),
                 )
-                for i, cell in first_cells
+                for i, cell in last_cells
             )
-        elif successor_pred is not None and last_pred is not None:
+        elif successor_pred is not None and first_pred is not None:
             table = dict(
                 (
                     (
@@ -88,7 +88,7 @@ def incremental_multiple_orders_wfomc(context: WFOMCContext, t) -> RingElement:
                     ),
                     cell_graph.get_cell_weight(cell),
                 )
-                for i, cell in enumerate(body_cells)
+                for i, cell in body_cells
             )
         elif successor_pred is not None:
             table = dict(
@@ -275,14 +275,14 @@ def incremental_multiple_orders_wfomc(context: WFOMCContext, t) -> RingElement:
                 out.append((new_key, h_old * W_cell * lambda_))
             return out
         
-        for i in range(1, domain_size - (0 if last_pred is None else 1)):
+        for i in range(1, domain_size - (0 if first_pred is None else 1)):
             old_table = table
             table = dict()
             if i >= (domain_size + 1) // 2:
                 max_rho_size = domain_size - i
             else:
                 max_rho_size = domain_size
-            for j, cell in enumerate(cells) if first_pred is None and last_pred is None else body_cells:
+            for j, cell in enumerate(cells) if last_pred is None and first_pred is None else body_cells:
                 w = cell_graph.get_cell_weight(cell)
                 for key, h_old in old_table.items():
                     sigma, rho = key
@@ -309,11 +309,13 @@ def incremental_multiple_orders_wfomc(context: WFOMCContext, t) -> RingElement:
                         h_news = only(h_old, sigma, rho, cell, j)
                         for new_key, h_new in h_news:
                             table[new_key] = table.get(new_key, Rational(0, 1)) + h_new
-        if last_pred is not None and domain_size > 1:
+
+        print(sum(table.values()))
+        if first_pred is not None and domain_size > 1:
             max_rho_size = 1
-            for j, cell in last_cells:
-                old_table = table
-                table = dict()
+            old_table = table
+            table = dict()
+            for j, cell in first_cells:
                 w = cell_graph.get_cell_weight(cell)
                 for key, h_old in old_table.items():
                     sigma, rho = key
@@ -332,6 +334,7 @@ def incremental_multiple_orders_wfomc(context: WFOMCContext, t) -> RingElement:
                         h_news = head(h_old, sigma, rho, cell, j)
                         for new_key, h_new in h_news:
                             table[new_key] = table.get(new_key, Rational(0, 1)) + h_new
+        print(sum(table.values()))
         res = res + weight * sum(table.values())
 
     return res
