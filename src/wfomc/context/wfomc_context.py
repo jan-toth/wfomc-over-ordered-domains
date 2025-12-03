@@ -39,6 +39,9 @@ class WFOMCContext(object):
         self.leq_pred: Pred = None
         self.predecessor_preds: dict[int, Pred] = None
         self.circular_predecessor_pred: Pred = None
+        self.successor_pred: Pred = None
+        self.first_pred: Pred = None
+        self.last_pred: Pred = None
         # for handling unary evidence
         self.element2evidence: dict[Const, set[AtomicFormula]] = dict()
         self.partition_constraint: PartitionConstraint = None
@@ -64,12 +67,12 @@ class WFOMCContext(object):
             return self.weights[pred]
         return (default, default)
 
-    def decode_result(self, res: RingElement) -> Rational:
+    def decode_result(self, res: RingElement, linear_order_fixed:bool = False) -> Rational:
         if not self.contain_cardinality_constraint():
             res = res / self.repeat_factor
         else:
             res = self.cardinality_constraint.decode_poly(res) / self.repeat_factor
-        if self.leq_pred is not None:
+        if self.leq_pred is not None and not linear_order_fixed:
             res *= Rational(math.factorial(len(self.domain)), 1)
         if self.circular_predecessor_pred is not None:
             res /= Rational(len(self.domain), 1)
@@ -185,3 +188,10 @@ class WFOMCContext(object):
                     1: Pred('CIRCULAR_PRED', 2)
                 }
             self.circular_predecessor_pred = Pred('CIRCULAR_PRED', 2)
+        
+        if self.problem.contain_successor_axiom():
+            self.successor_pred = Pred('SUC', 2)
+        if self.problem.contain_last_predicate():
+            self.last_pred = Pred('LAST', 1)
+        if self.problem.contain_first_predicate():
+            self.first_pred = Pred('FIRST', 1)

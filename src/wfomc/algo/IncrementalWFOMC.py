@@ -52,7 +52,8 @@ def incremental_wfomc(context: WFOMCContext,
                         None if pred_orders is None else tuple(
                             cell for _ in range(pred_max_order)
                         ),
-                        None if circular_predecessor_pred is None else cell
+                        None if circular_predecessor_pred is None else cell,
+                        tuple(int(i * n_cells + i == k) for k in range(n_cells**2))
                     )
                 ] = (
                     cell_graph.get_cell_weight(cell),
@@ -67,7 +68,8 @@ def incremental_wfomc(context: WFOMCContext,
                         None if pred_orders is None else tuple(
                             cell for _ in range(pred_max_order)
                         ),
-                        None if circular_predecessor_pred is None else cell
+                        None if circular_predecessor_pred is None else cell,
+                        tuple(int(i * n_cells + i == k) for k in range(n_cells**2))
                     ),
                     (
                         cell_graph.get_cell_weight(cell),

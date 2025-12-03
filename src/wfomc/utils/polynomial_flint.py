@@ -58,6 +58,10 @@ def _get_degrees(monomial: Poly):
 
 
 def coeff_dict(p: Poly, gens: list[Poly]) -> Generator[tuple[int], Rational, None]:
+    if isinstance(p, fmpq):
+        degrees = tuple(0 for i in range(len(gens)))
+        yield degrees, p
+        return
     p_gens = p.context().gens()
     coeffs = defaultdict(lambda: Rational(0, 1))
     gens_map = {i: p_gens.index(g) for i, g in enumerate(gens)}

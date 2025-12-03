@@ -8,19 +8,19 @@ from contexttimer import Timer
 
 from wfomc.network import UnaryEvidenceEncoding
 from wfomc.problems import WFOMCProblem
-from wfomc.algo import Algo, standard_wfomc, fast_wfomc, incremental_wfomc, recursive_wfomc
+from wfomc.algo import Algo, standard_wfomc, fast_wfomc, incremental_wfomc, recursive_wfomc, incremental_multiple_orders_wfomc
 from wfomc.utils import MultinomialCoefficients, Rational, round_rational
 from wfomc.context import WFOMCContext
 from wfomc.parser import parse_input
 
 
 def wfomc(problem: WFOMCProblem, algo: Algo = Algo.STANDARD,
-          unary_evidence_encoding: UnaryEvidenceEncoding = UnaryEvidenceEncoding.CCS) -> Rational:
+          unary_evidence_encoding: UnaryEvidenceEncoding = UnaryEvidenceEncoding.CCS, lof=False) -> Rational:
     MultinomialCoefficients.setup(len(problem.domain))
 
     if problem.contain_linear_order_axiom():
         logger.info('Linear order axiom with the predicate LEQ is found')
-        if algo != Algo.INCREMENTAL and algo != Algo.RECURSIVE:
+        if algo != Algo.INCREMENTAL and algo != Algo.RECURSIVE and algo != Algo.INCREMENTALwithSUCCESSOR:
             raise RuntimeError("Linear order axiom is only supported by the "
                                "incremental and recursive WFOMC algorithms")
     if problem.contain_predecessor_axiom():
@@ -35,6 +35,12 @@ def wfomc(problem: WFOMCProblem, algo: Algo = Algo.STANDARD,
                 algo != Algo.FASTv2 and algo != Algo.INCREMENTAL:
             raise RuntimeError("Partition constraint is only supported for the "
                                "fastv2 WFOMC and incremental WFOMC algorithms")
+        
+    if problem.contain_successor_axiom():
+        logger.info('Successor predicate SUC is found')
+        if algo != Algo.INCREMENTALwithSUCCESSOR:
+            raise RuntimeError("Successor axiom is only supported by the "
+                               "incrementalv2 WFOMC algorithm")
 
     logger.info(f'Invoke WFOMC with {algo} algorithm and {unary_evidence_encoding} encoding')
 
@@ -48,9 +54,11 @@ def wfomc(problem: WFOMCProblem, algo: Algo = Algo.STANDARD,
             res = fast_wfomc(context, True)
         elif algo == Algo.INCREMENTAL:
             res = incremental_wfomc(context, problem.circle_len)
+        elif algo == Algo.INCREMENTALwithSUCCESSOR:
+            res= incremental_multiple_orders_wfomc(context, problem.circle_len)
         elif algo == Algo.RECURSIVE:
             res = recursive_wfomc(context)
-    res = context.decode_result(res)
+        res = context.decode_result(res, lof)
     logger.info('WFOMC time: %s', t.elapsed)
     return res
 
@@ -70,6 +78,7 @@ def parse_args():
                         choices=list(UnaryEvidenceEncoding),
                         default=UnaryEvidenceEncoding.CCS)
     parser.add_argument('--debug', action='store_true', default=False)
+    parser.add_argument('--linear_order_fixed', '-lof', action="store_true")
     args = parser.parse_args()
     return args
 
@@ -92,7 +101,8 @@ def main() -> None:
 
     res = wfomc(
         problem, algo=args.algo,
-        unary_evidence_encoding=args.unary_evidence_encoding
+        unary_evidence_encoding=args.unary_evidence_encoding,
+        lof=args.linear_order_fixed
     )
     logger.info('WFOMC (arbitrary precision): %s', res)
     round_val = round_rational(res)
