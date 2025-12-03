@@ -21,7 +21,7 @@ class Algo(Enum):
     FASTv2 = 'fastv2'
     INCREMENTAL = 'incremental'
     RECURSIVE = 'recursive'
-    INCREMENTALwithSUCCESSOR = "incrementalv2"
+    INCREMENTALwithSUCCESSOR = "incremental_successor"
 
     def __str__(self):
         return self.value
