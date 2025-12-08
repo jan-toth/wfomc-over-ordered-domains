@@ -12,16 +12,16 @@ uv sync
 
 
 ## =============================
-##        INCREMENTAL
+##        INCREMENTAL (LO)
 ## =============================
 
 
 # sequences
 uv run auto_counter.py -w ../models/seq/head_tail -inc -o seq_ht_results.csv
-uv run auto_counter.py -i ../models/seq/head_tail/ -d4 -ganak -o seq_ht_results.csv
+uv run auto_counter.py -w ../models/seq/head_tail/ -d4 -ganak -o seq_ht_results.csv
 
 uv run auto_counter.py -w ../models/seq/topological_orders -inc -o seq_to_results.csv
-uv run auto_counter.py -i ../models/seq/topological_orders/ -d4 -ganak -o seq_to_results.csv
+uv run auto_counter.py -w ../models/seq/topological_orders/ -d4 -ganak -o seq_to_results.csv
 
 
 # T OOOOOO D OOOOOOOOO
@@ -58,6 +58,8 @@ uv run auto_counter.py -i ../models/weather2/old_encode/kl9.mln -inc -o mln_resu
 uv run auto_counter.py -w ../models/ws/new_encode -inc -l inc2 -o ws_results.csv
 uv run auto_counter.py -w ../models/ws/old_encode -rec -inc -o ws_results.csv
 uv run auto_counter.py -w ../models/ws/new_encode -ganak -d4 -o ws_results.csv
+
+
 
 
 ## =============================

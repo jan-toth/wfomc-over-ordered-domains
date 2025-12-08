@@ -3,6 +3,6 @@
 
 domain = {c_other2, c_other0, c_other3, c_Paul, c_Wilma, c_other1, c_John, c_other4}
 
-1 |p_not_consecutive_first| > 1
+1 |p_not_consecutive_first| >= 2
 
 p_set_not_consecutive(c_John), ~p_set_not_consecutive(c_other1), p_set_people(c_Wilma), p_set_people(c_John), ~p_set_not_consecutive(c_other4), p_set_people(c_other1), p_set_people(c_other3), ~p_set_not_consecutive(c_other0), p_set_people(c_other4), p_set_people(c_Paul), p_set_not_consecutive(c_Paul), p_set_not_consecutive(c_Wilma), ~p_set_not_consecutive(c_other2), p_set_people(c_other0), ~p_set_not_consecutive(c_other3), p_set_people(c_other2)

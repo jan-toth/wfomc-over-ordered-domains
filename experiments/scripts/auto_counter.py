@@ -119,13 +119,13 @@ if __name__ == "__main__":
     print(args)
 
     if args.walk is None:
-        if args.input is None:
-            print("Please select an input [-w <path>, -i <path>]; if both specified -w takes precedence")
-            exit(1)
+        if args.input is None and not args.generate_cnf:
+                print("Please select an input [-w <path>, -i <path>]; if both specified -w takes precedence OR [-cnf] for generating CNF files")
+                exit(1)
     elif args.input is not None:
         print("Both --walk and --input specified. Considering ONLY --walk.")
 
-    if args.d4 is False and args.ganak is False and args.incremental is False and args.recursive is False:
+    if args.d4 is False and args.ganak is False and args.incremental is False and args.recursive is False and args.generate_cnf is False:
         print("Please select at least one solver from [-d4, -ganak, -inc, -rec]")
         exit(1)
 
