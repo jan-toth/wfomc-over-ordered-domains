@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 from contexttimer import Timer
 import logzero
@@ -12,14 +13,11 @@ from wfomc.context import WFOMCContext
 
 
 HEAD_TAIL = r"\forall X: (\forall Y: (T(X) & LEQ(X, Y) -> T(Y)))"
-HEAD_MIDDLE_TAIL = r"""\forall X: (\forall Y: ( (T(X) & LEQ(X, Y) -> T(Y)) & 
-                                                (H(Y) & LEQ(X, Y) -> H(X)) & 
-                                                (~H(X) | ~T(X))
-                                                )
-                                    )"""
+TOPOLOGICAL_ORDERS = r"""\forall X: (\forall Y: (E(X, Y) -> LEQ(X, Y)))"""
 
-# experiments/results
-OUTPUT_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "results")
+
+SCRIPT_PATH = Path(__file__).absolute()
+OUTPUT_DIR = SCRIPT_PATH.parent.parent.joinpath("results")  # experiments/results
 
 
 def run(input, domain_sizes, out_file="seq.csv"):
@@ -53,4 +51,4 @@ if __name__ == "__main__":
         os.mkdir(OUTPUT_DIR)
 
     run(HEAD_TAIL, 100, "seq_head_tail.csv")
-    run(HEAD_MIDDLE_TAIL, 100, "seq_head_middle_tail.csv")
+    run(TOPOLOGICAL_ORDERS, 100, "seq_top_orders.csv")

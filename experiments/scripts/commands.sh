@@ -18,18 +18,11 @@ uv sync
 
 # sequences
 uv run auto_counter.py -w ../models/seq/head_tail -inc -o seq_ht_results.csv
-uv run auto_counter.py -i ../models/seq/head_tail/1.cnf -d4 -ganak -o seq_ht_results.csv
-uv run auto_counter.py -i ../models/seq/head_tail/5.cnf -d4 -ganak -o seq_ht_results.csv
-uv run auto_counter.py -i ../models/seq/head_tail/10.cnf -d4 -ganak -o seq_ht_results.csv
-uv run auto_counter.py -i ../models/seq/head_tail/15.cnf -d4 -ganak -o seq_ht_results.csv
-uv run auto_counter.py -i ../models/seq/head_tail/20.cnf -d4 -ganak -o seq_ht_results.csv
+uv run auto_counter.py -i ../models/seq/head_tail/ -d4 -ganak -o seq_ht_results.csv
 
-uv run auto_counter.py -w ../models/seq/head_middle_tail -inc -d4 -ganak -o seq_hmt_results.csv
-uv run auto_counter.py -i ../models/seq/head_middle_tail/1.cnf -d4 -ganak -o seq_hmt_results.csv
-uv run auto_counter.py -i ../models/seq/head_middle_tail/5.cnf -d4 -ganak -o seq_hmt_results.csv
-uv run auto_counter.py -i ../models/seq/head_middle_tail/10.cnf -d4 -ganak -o seq_hmt_results.csv
-uv run auto_counter.py -i ../models/seq/head_middle_tail/15.cnf -d4 -ganak -o seq_hmt_results.csv
-uv run auto_counter.py -i ../models/seq/head_middle_tail/20.cnf -d4 -ganak -o seq_hmt_results.csv
+uv run auto_counter.py -w ../models/seq/topological_orders -inc -o seq_to_results.csv
+uv run auto_counter.py -i ../models/seq/topological_orders/ -d4 -ganak -o seq_to_results.csv
+
 
 # T OOOOOO D OOOOOOOOO
 # # combinatorics
@@ -50,6 +43,7 @@ uv run auto_counter.py -i ../models/seq/head_middle_tail/20.cnf -d4 -ganak -o se
 
 # MLNs
 uv run auto_counter.py -w ../models/weather -inc -l inc2 -o mln_results.csv
+
 uv run auto_counter.py -w ../models/weather2/new_encode -inc -l inc2 -o mln_results.csv
 uv run auto_counter.py -w ../models/weather2/old_encode -rec -o mln_results.csv
 uv run auto_counter.py -i ../models/weather2/old_encode/kl4.mln -inc -o mln_results.csv
@@ -63,12 +57,7 @@ uv run auto_counter.py -i ../models/weather2/old_encode/kl9.mln -inc -o mln_resu
 # Watts-Strogatz
 uv run auto_counter.py -w ../models/ws/new_encode -inc -l inc2 -o ws_results.csv
 uv run auto_counter.py -w ../models/ws/old_encode -rec -inc -o ws_results.csv
-
-# TODO ... all cnf are UNSAT ??
-# CIRCULAR_PRED ??
-# uv run auto_counter.py -w ../models/ws/old_encode -ganak -d4 -o ws_results.csv
-# uv run fo2ex2cnf.py -i ../models/ws/old_encode/z8_1.wfomcs
-
+uv run auto_counter.py -w ../models/ws/new_encode -ganak -d4 -o ws_results.csv
 
 
 ## =============================

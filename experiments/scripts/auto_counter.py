@@ -2,7 +2,6 @@ import argparse
 import datetime
 import os
 from pathlib import Path
-import shutil
 from subprocess import run
 
 from contexttimer import Timer
@@ -35,6 +34,7 @@ def parse_args():
     )
     parser.add_argument("--walk", "-w", type=str, required=False, help="folder to walk for .wfomcs files", default=None)
     parser.add_argument('--input', '-i', type=str, required=False, help='sentence file', default=None)
+    parser.add_argument('--output_file', '-o', type=str, required=False, default="results.csv", help='filename of the resulting CSV')
 
     parser.add_argument("-d4", "--d4", action='store_true', help="Problems will be computed with d4")
     parser.add_argument("--ganak", "-ganak", action="store_true", help="Problems will be computed with ganak")
@@ -45,7 +45,6 @@ def parse_args():
 
     parser.add_argument('--evidenceencode', '-ee', type=int, required=False, help='evidence encode method 1-CCS 2-PC; default=1',default=1)
     parser.add_argument('--label', '-l', type=str, required=False, help='algorithm label to be used in output CSV', default=None)
-    parser.add_argument('--output_file', '-o', type=str, required=False, default="results.csv", help='filename of the resulting CSV')
 
     args = parser.parse_args()
     return args
@@ -77,7 +76,7 @@ def run_ganak(infile_cnf):
 
 
 def process_wfomc_problem(args, out_path, file, fn, uee, inc_label):
-    print(f"PROCESSING: {file}")
+    print(f"WFOMC PROCESSING: {file}")
     print(datetime.datetime.now())
 
     if args.incremental:
@@ -94,7 +93,7 @@ def process_wfomc_problem(args, out_path, file, fn, uee, inc_label):
 
 
 def process_wmc_problem(args, out_path, file, fn):
-    print(f"PROCESSING: {file}")
+    print(f"WMC PROCESSING: {file}")
     print(datetime.datetime.now())
 
     if args.d4:
@@ -131,7 +130,7 @@ if __name__ == "__main__":
         exit(1)
 
 
-    if args.walk is not None:
+    if args.walk is not None:   # "--walk" switch takes precedence
         input_dir = Path(args.walk)
 
         files = [str(input_dir.joinpath(f)) for f in natsorted(os.listdir(input_dir)) if (os.path.isfile(input_dir.joinpath(f)))]
@@ -142,7 +141,7 @@ if __name__ == "__main__":
         mln_paths = filter_paths(files, ".mln")
         cnf_paths = filter_paths(files, ".cnf")
 
-    else:  # "--walk" switch takes precedence
+    else:
         p = Path(args.input)
 
         input_dir = p.parent
@@ -164,7 +163,7 @@ if __name__ == "__main__":
     cnf_names = filter_names(cnf_paths)
 
 
-    if (args.d4 is not False or args.ganak is not False) and args.generate_cnf:
+    if args.generate_cnf:
         # Convert .wfomcs to .cnf
         for file, fn in zip(wfomcs_paths, wfomcs_names):
             run(["uv", "run", str(FO2CNF_PATH.absolute()), "-i", file, "-e", "3", "-o", f"{fn}.cnf"])

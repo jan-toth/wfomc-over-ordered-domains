@@ -10,6 +10,7 @@ def parse_args():
     parser.add_argument('--dom_size', "-n", required=True, type=int)
     parser.add_argument("--head_tail", "-ht", action="store_true", help="Gnerate HEAD-TAIL cnf")
     parser.add_argument("--head_middle_tail", "-hmt", action="store_true", help="Gnerate HEAD-MIDDLE-TAIL cnf", default=False)
+    parser.add_argument("--topological_orders", "-to", action="store_true", help="Gnerate TOPOLOGICAL-ORDERS cnf", default=False)
 
     args = parser.parse_args()
     return args
@@ -90,6 +91,39 @@ def generate_head_middle_tail(n):
                 fw.write(f"{x} ")
             fw.write("0\n")
 
+
+def generate_topological_orders(n):
+    def next_id():
+        for i in range(1, 2*n**2 + 100):
+            yield i
+
+    ids = next_id()
+
+    edges = [[next(ids) for j in range(n)] for i in range(n)]
+    leq = [[next(ids) for j in range(n)] for i in range(n)]
+
+    clauses = []
+    for i in range(n):
+        for j in range(i):
+            clauses.append([-leq[i][j]])
+        for j in range(i, n):
+            clauses.append([leq[i][j]])
+
+    for i in range(n):
+        for j in range(n):
+            clauses.append([-edges[i][j], leq[i][j]])
+
+    nvars = 2*n**2
+
+    with open(f'{n}_e1.cnf', 'w') as fw:
+        fw.write(f"p cnf {nvars} {len(clauses)}\n")
+        for cl in clauses:
+            for x in cl:
+                fw.write(f"{x} ")
+            fw.write("0\n")
+
+
+
 if __name__ == "__main__":
     args = parse_args()
 
@@ -99,3 +133,5 @@ if __name__ == "__main__":
     if args.head_middle_tail:
         generate_head_middle_tail(args.dom_size)
 
+    if args.topological_orders:
+        generate_topological_orders(args.dom_size)

@@ -25,9 +25,8 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-def generate_leq_pred_axioms(domain, atom_to_digit):
 
-    print("inside leq axiom")
+def generate_leq_pred_axioms(domain, atom_to_digit, atomsym_to_digit):
 
     leq_pred_clauses = []
     consts = sorted(list(domain), key=lambda c: str(c))
@@ -59,9 +58,7 @@ def generate_leq_pred_axioms(domain, atom_to_digit):
 
     return leq_pred_clauses
 
-def generate_leq_dimacs(domain, atom_to_digit):
-
-    print("inside leq axiom")
+def generate_leq_dimacs(domain, atom_to_digit, atomsym_to_digit):
 
     out_clauses = []
     consts = sorted(list(domain), key=lambda c: str(c))
@@ -74,7 +71,7 @@ def generate_leq_dimacs(domain, atom_to_digit):
             leqatom = atom
             break
     for atom, var_id in atom_to_digit.items():
-        if atom.pred.name == "PRED1": 
+        if atom.pred.name == "PRED1" or atom.pred.name == "PRED": 
             predatom = atom
             break
     for atom, var_id in atom_to_digit.items():
@@ -90,8 +87,8 @@ def generate_leq_dimacs(domain, atom_to_digit):
     xyz_expr: sympy.Expr = sympy.true
     if leqatom is not None:
         leq_pred = leqatom.pred
-    if leqatom is None:
-        leq_pred = Pred("LEQ", 1)
+    elif leqatom is None:
+        leq_pred = Pred("LEQ", 2)
     if predatom is not None:
         pred_pred = predatom.pred
     else:
@@ -104,7 +101,8 @@ def generate_leq_dimacs(domain, atom_to_digit):
     leq_tab = np.zeros((len(consts), len(consts)), dtype=int)
     for i, j in product(consts, repeat=2):
         if AtomicFormula(leq_pred, (i, j), True) not in atom_to_digit:
-            atom_to_digit[AtomicFormula(leq_pred, (i, j), True)] = len(atomsym_to_digit) + 1
+            atom_to_digit[AtomicFormula(leq_pred, (i, j), True)] = len(atom_to_digit) + 1
+            atomsym_to_digit[AtomicFormula(leq_pred, (i, j), True).expr] = len(atomsym_to_digit)+1
         leq_tab[consts.index(i), consts.index(j)] = atom_to_digit[AtomicFormula(leq_pred, (i, j), True)]
 
     for i in range(len(consts)):
@@ -124,7 +122,8 @@ def generate_leq_dimacs(domain, atom_to_digit):
         pred_tab = np.zeros((len(consts), len(consts)), dtype=int)
         for i, j in product(consts, repeat=2):
             if AtomicFormula(pred_pred, (i, j), True) not in atom_to_digit:
-                atom_to_digit[AtomicFormula(pred_pred, (i, j), True)] = len(atomsym_to_digit) + 1
+                atom_to_digit[AtomicFormula(pred_pred, (i, j), True)] = len(atom_to_digit) + 1
+                atomsym_to_digit[AtomicFormula(pred_pred, (i, j), True).expr] = len(atomsym_to_digit)+1
             pred_tab[consts.index(i), consts.index(j)] = atom_to_digit[AtomicFormula(pred_pred, (i, j), True)]
 
         for i in range(len(consts)):
@@ -164,6 +163,67 @@ def generate_leq_dimacs(domain, atom_to_digit):
                     out_clauses.append([-pred_tab[i, j], leq_tab[i, k], -leq_tab[j, k]])
                     out_clauses.append([-pred_tab[i, j], -leq_tab[i, k], leq_tab[j, k]])
 
+    if circ_pred_pred is not None:
+        circpred_tab = np.zeros((len(consts), len(consts)), dtype=int)
+        for i, j in product(consts, repeat=2):
+            if AtomicFormula(circ_pred_pred, (i, j), True) not in atom_to_digit:
+                atom_to_digit[AtomicFormula(circ_pred_pred, (i, j), True)] = len(atomsym_to_digit) + 1
+                atomsym_to_digit[AtomicFormula(circ_pred_pred, (i, j), True).expr] = len(atomsym_to_digit)+1
+            circpred_tab[consts.index(i), consts.index(j)] = atom_to_digit[AtomicFormula(circ_pred_pred, (i, j), True)]
+
+        for i in range(len(consts)):
+            out_clauses.append([-circpred_tab[i, i]])
+
+            # V x E z CircPred(z, x)
+            out_clauses.append(circpred_tab[:, i])
+            
+            # V x E z CircPred(x, z)
+            out_clauses.append(circpred_tab[i, :])
+
+            # Vx V y V z (E a LEQ(a, x) -> (~Pred(x, y) | LEQ(x, z) | ~LEQ(y, z)) & (~Pred(x, y) | ~LEQ(x, z) | LEQ(y, z)))
+            # V x V y V z V a ~LEQ(a, x) | (~Pred(x, y) | LEQ(x, z) | ~LEQ(y, z)) & (~Pred(x, y) | ~LEQ(x, z) | LEQ(y, z)))
+            # V x V y V z V a (~LEQ(a, x) | ~Pred(y, x) | LEQ(x, z) | ~LEQ(y, z)) & (~LEQ(a, x) | ~Pred(y, x) | ~LEQ(x, z) | LEQ(y, z)))
+
+            # V x V y V z V a (~LEQ(x, a) | ~Pred(x, y) | LEQ(x, z) | ~LEQ(y, z)) & (~LEQ(a, x) | ~Pred(x, y) | ~LEQ(x, z) | LEQ(y, z)))
+            
+            for a in range(len(consts)):
+                if a == i:
+                    continue
+                for j in range(len(consts)):
+                    if j == i:
+                        continue
+                    for k in range(len(consts)):
+                        if k == j or k == i:
+                            continue
+                        out_clauses.append([-leq_tab[a, i], -circpred_tab[j, i], leq_tab[i, k], -leq_tab[j, k]])
+                        out_clauses.append([-leq_tab[a, i], -circpred_tab[j, i], -leq_tab[i, k], leq_tab[j, k]])
+                        out_clauses.append([-leq_tab[i, a], -circpred_tab[i, j], leq_tab[i, k], -leq_tab[j, k]])
+                        out_clauses.append([-leq_tab[i, a], -circpred_tab[i, j], -leq_tab[i, k], leq_tab[j, k]])
+    
+            # V x V y E z ~LEQ(x, z) | CircPred(x, y) -> ~LEQ(x, y)
+            # V x V y E z ~LEQ(z, x) | CircPred(x, y) -> ~LEQ(x, y)
+            # V x V y V z LEQ(x, z) -> CircPred(x, y) -> LEQ(x, y)
+            # V x V y V z LEQ(z, x) -> CircPred(x, y) -> LEQ(x, y)
+            for j in range(len(consts)):
+                if i == j:
+                    continue
+                
+                new_clause = list(-x for x in leq_tab[i, :] if x != leq_tab[i, i]) # all elements are higher
+                new_clause.append(-circpred_tab[j, i])
+                new_clause.append(leq_tab[i, j])
+                out_clauses.append(new_clause)
+                
+                new_clause = list(-x for x in leq_tab[:, i] if x != leq_tab[i, i]) # all elements are lower
+                new_clause.append(-circpred_tab[i, j])
+                new_clause.append(leq_tab[j, i])
+                out_clauses.append(new_clause)
+                
+                for k in range(len(consts)):
+                    if k == i or k == j:
+                        continue
+                    out_clauses.append([-leq_tab[k, i], -circpred_tab[j, i], leq_tab[j, i]])
+                    out_clauses.append([-leq_tab[i, k], -circpred_tab[i, j], leq_tab[i, j]])
+    
     return out_clauses
             
 def generate_xyz_leq_expr(domain)->sympy.Expr:
@@ -312,8 +372,10 @@ if __name__ == "__main__":
 
 #============ leq support 2 ================
     if leq_support == 2:
-        print("WARNING: There might be bugs in encode2")
-        expr = sympy.And(expr, generate_xyz_leq_expr(domain))
+        # print("WARNING: There might be bugs in encode2")
+        # expr = sympy.And(expr, generate_xyz_leq_expr(domain))
+        print("Unsupported")
+        exit(1)
 
 #============ get_clause ================
     expr = sympy.to_cnf(expr)
@@ -364,19 +426,29 @@ if __name__ == "__main__":
 
 # #============ leq support 1 hard encode ================
     if leq_support == 1:
-        leq_clauses=generate_leq_pred_axioms(domain, atom_to_digit)
+        leq_clauses=generate_leq_pred_axioms(domain, atom_to_digit, atomsym_to_digit)
         for clause in leq_clauses:
             line = " ".join(map(str, clause)) + " 0\n"
             cnf_clause_list.append(line)
 
 # #============ leq support 3 encoding ================
     if leq_support == 3:
-        leq_clauses=generate_leq_dimacs(domain, atom_to_digit)
+        leq_clauses=generate_leq_dimacs(domain, atom_to_digit, atomsym_to_digit)
         for clause in leq_clauses:
             line = " ".join(map(str, clause)) + " 0\n"
             cnf_clause_list.append(line)
 
 #============cc===========
+
+    print(atomsym_to_digit)
+
+    if len(atom_to_digit) not in atom_to_digit.values():
+        print("MAX is in ATOM_TO_DIGIT")
+    else:
+        print("MAX is not in ATOM_TO_DIGIT")
+    print(max(atom_to_digit.values()), len(atom_to_digit))
+
+    """
     if problem.cardinality_constraint is not None:
         constraints = problem.cardinality_constraint.constraints
         cc_clauses = []
@@ -385,12 +457,21 @@ if __name__ == "__main__":
                 pred_name = str(pred)  
                 k = int(bound)  
 
-                
-                vars = [v for ksym, v in atomsym_to_digit.items() if pred_name in str(ksym)]
+                if len(atom_to_digit) != len(atomsym_to_digit):
+                    print("Found it")
+
+                #vars = [v for ksym, v in atomsym_to_digit.items() if pred_name in str(ksym)]
+                vars = [v for ksym, v in atomsym_to_digit.items() if pred_name == str(ksym)[:str(ksym).index("(")]]
+                print(vars)
+                vars_test = [v for ksym, v in atomsym_to_digit.items()]
+                for var in vars_test:
+                    if var not in vars:
+                        print(var)
+                print(atomsym_to_digit)
                 if not vars:
                     continue
                 if op == "<=":
-                    cnf_cc = CardEnc.atmost(lits=vars, bound=k, encoding=EncType.seqcounter    )
+                    cnf_cc = CardEnc.atmost(lits=vars, bound=k,  encoding=EncType.seqcounter    )
                 elif op == ">=":
                     cnf_cc = CardEnc.atleast(lits=vars, bound=k, encoding=EncType.seqcounter    )
                 elif op == "=":
@@ -422,9 +503,48 @@ if __name__ == "__main__":
         for clause in cc_clauses:
             line = " ".join(map(str, clause)) + " 0\n"
             cnf_clause_list.append(line)
- 
+    """
+    if problem.cardinality_constraint is not None:
+        constraints = problem.cardinality_constraint.constraints
+        cc_clauses = []
+        for pred_map, op, bound in constraints:
+            for pred, coeff in pred_map.items():
+                pred_name = str(pred)  
+                k = int(bound)  
 
+                #vars = [v for ksym, v in atomsym_to_digit.items() if pred_name in str(ksym)]
+                #var_preds = [ksym for ksym, v in atomsym_to_digit.items() if pred_name in str(ksym)]
+                vars = [v for ksym, v in atomsym_to_digit.items() if pred_name == str(ksym)[:str(ksym).index("(")]]
+                var_preds = [ksym for ksym, v in atomsym_to_digit.items() if pred_name == str(ksym)[:str(ksym).index("(")]]
+                print(var_preds)
+                if not vars:
+                    continue
+                if op == "<=":
+                    cnf_cc = CardEnc.atmost(lits=vars, bound=k, top_id=len(atom_to_digit),  encoding=EncType.seqcounter    )
+                elif op == ">=":
+                    cnf_cc = CardEnc.atleast(lits=vars, bound=k, top_id=len(atom_to_digit), encoding=EncType.seqcounter    )
+                elif op == "=":
+                    cnf_cc = CardEnc.equals(lits=vars, bound=k, top_id=len(atom_to_digit), encoding=EncType.seqcounter    )
+                else:
+                    raise RuntimeError(f"Unknown operator: {op}")
+                
+                
+                #print('before:',len(atom_to_digit), modify_clauses)
+                for clauses in cnf_cc.clauses:
+                    for i in clauses:
+                        if abs(i) not in atom_to_digit.values() :
+                            ccatom:AtomicFormula= AtomicFormula( Pred('CC'+str(abs(i)), 1), 'c',True)
+                            atom_to_digit[ccatom] = abs(i)
+                            atomsym_to_digit[ccatom.expr] = abs(i)
+                #print('after:',len(atom_to_digit), modify_clauses)
 
+                cc_clauses.extend(cnf_cc.clauses)
+
+        for clause in cc_clauses:
+            line = " ".join(map(str, clause)) + " 0\n"
+            cnf_clause_list.append(line)
+    
+    
     cnf_clause_str="".join(cnf_clause_list)
     #print(cnf_clause_str)
 
@@ -435,6 +555,7 @@ if __name__ == "__main__":
 
     #cnf_file_path = os.path.join(sentence_dir, f'{os.path.splitext(sentence_base)[0] }.cnf')
     cnf_file_path = f'tmp/{os.path.splitext(sentence_base)[0] }.cnf' if args.output is None else args.output
+
 
     cnf_file = open(cnf_file_path, 'w')
     cnf_file.write(kstr)
