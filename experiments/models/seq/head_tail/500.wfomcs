@@ -1,2 +1,0 @@
-\forall X: (\forall Y: (T(X) & LEQ(X, Y) -> T(Y)))
-domain = 500

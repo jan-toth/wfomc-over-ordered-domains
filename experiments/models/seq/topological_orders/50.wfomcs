@@ -1,3 +1,0 @@
-\forall X: (\forall Y: (E(X, Y) -> LEQ(X, Y)))
-
-domain = 50
