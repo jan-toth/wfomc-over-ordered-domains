@@ -61,7 +61,7 @@ def run_wfomc(infile, uee, algo=Algo.INCREMENTAL):
 
 def run_wmc(command, index):
     with Timer() as t:
-        out = run(command, capture_output=True)
+        out = run(command, capture_output=True, check=True)
 
     val = out.stdout.decode().split('\n')[-index].rstrip().split()[-1]
     return val, t.elapsed
