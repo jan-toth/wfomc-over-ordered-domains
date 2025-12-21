@@ -10,23 +10,96 @@ uv sync
 # mkdir ../results
 
 
+loop_with_timeout() {
+    cmd="$1"
+    shift
+
+    for fn in "$@"; do
+        timeout 3h $cmd -i $fn
+
+        if [ $? -eq 124 ]; then
+            echo "Timeout!"
+            break
+        fi
+
+    done
+}
+
 
 ## =============================
 ##        INCREMENTAL (LO)
 ## =============================
 
 
-# sequences
-for fn in ../models/seq/head_tail/wfomcs
-do
-    timeout 3h uv run auto_counter.py -i $fn -inc -o seq_ht_results_new.csv
-done
 
-for fn in ../models/seq/head_tail/cnf
-do
-    timeout 3h uv run auto_counter.py -i $fn -ganak -o seq_ht_results_new.csv
-    timeout 3h uv run auto_counter.py -i $fn -d4 -o seq_ht_results_new.csv
-done
+# sequences
+# HEAD & TAIL
+loop_with_timeout "uv run auto_counter.py -inc -o seq_ht_results_new.csv" $(ls -v ../models/seq/head_tail/wfomcs/*)
+loop_with_timeout "uv run auto_counter.py -ganak -o seq_ht_results_new.csv" $(ls -v ../models/seq/head_tail/cnf/*_e1.cnf)
+loop_with_timeout "uv run auto_counter.py -d4 -o seq_ht_results_new.csv" $(ls -v ../models/seq/head_tail/cnf/*_e1.cnf)
+loop_with_timeout "uv run auto_counter.py -ganak -o seq_ht_results_new.csv" $(ls -v ../models/seq/head_tail/cnf/*_e3.cnf)
+loop_with_timeout "uv run auto_counter.py -d4 -o seq_ht_results_new.csv" $(ls -v ../models/seq/head_tail/cnf/*_e3.cnf)
+
+
+
+
+
+
+## =============================
+##        INCREMENTAL (LO)
+## =============================
+
+
+
+# sequences
+# for fn in ../models/seq/head_tail/wfomcs/*
+# do
+#     timeout 3h uv run auto_counter.py -i $fn -inc -o seq_ht_results_new.csv
+# done
+
+
+# for fn in ../models/seq/head_tail/cnf/*_e1.cnf
+# do
+#     timeout 3h uv run auto_counter.py -i $fn -ganak -o seq_ht_results_new.csv
+#     timeout 3h uv run auto_counter.py -i $fn -d4 -o seq_ht_results_new.csv
+# done
+
+# for fn in ../models/seq/head_tail/cnf/*_e3.cnf
+# do
+#     timeout 3h uv run auto_counter.py -i $fn -ganak -o seq_ht_results_new.csv
+#     timeout 3h uv run auto_counter.py -i $fn -d4 -o seq_ht_results_new.csv
+# done
+
+
+# problems=(  "../models/seq/head_tail/cnf/1_e3.cnf"
+#             "../models/seq/head_tail/cnf/5_e3.cnf"
+#             "../models/seq/head_tail/cnf/10_e3.cnf"
+#             "../models/seq/head_tail/cnf/15_e3.cnf"
+#             "../models/seq/head_tail/cnf/20_e3.cnf"
+#             "../models/seq/head_tail/cnf/25_e3.cnf"
+#             "../models/seq/head_tail/cnf/30_e3.cnf"
+#             # "../models/seq/head_tail/cnf/35_e3.cnf"
+#             # "../models/seq/head_tail/cnf/40_e3.cnf"
+#             # "../models/seq/head_tail/cnf/45_e3.cnf"
+#             # "../models/seq/head_tail/cnf/50_e3.cnf"
+# )
+# for fn in "${problems[@]}"
+# do
+#     timeout 3h uv run auto_counter.py -i $fn -ganak -o seq_ht_results_new.csv
+# done
+
+
+# problems=(  "../models/seq/head_tail/cnf/1_e3.cnf"
+#             "../models/seq/head_tail/cnf/5_e3.cnf"
+#             "../models/seq/head_tail/cnf/10_e3.cnf"
+#             "../models/seq/head_tail/cnf/15_e3.cnf"
+#             "../models/seq/head_tail/cnf/20_e3.cnf"
+#             "../models/seq/head_tail/cnf/25_e3.cnf"
+# )
+# for fn in "${problems[@]}"
+# do
+#     timeout 3h uv run auto_counter.py -i $fn -d4 -o seq_ht_results_new.csv
+# done
 
 # uv run auto_counter.py -w ../models/seq/head_tail -inc -o seq_ht_results.csv
 # uv run auto_counter.py -w ../models/seq/head_tail/ -d4 -ganak -o seq_ht_results.csv

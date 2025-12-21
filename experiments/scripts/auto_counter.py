@@ -76,40 +76,42 @@ def run_ganak(infile_cnf):
 
 
 def process_wfomc_problem(args, out_path, file, fn, uee, inc_label):
-    print(f"WFOMC PROCESSING: {file}")
-    print(datetime.datetime.now())
+    
 
     if args.incremental:
+        debug_shout(inc_label, file)
+
         val, time = run_wfomc(file, uee, Algo.INCREMENTAL)
         with open(out_path, "a") as fw:
             fw.write(f'{fn},{inc_label},{time},"{val}"\n')
 
     if args.recursive:
+        debug_shout("recursive", file)
         val, time = run_wfomc(file, uee, Algo.RECURSIVE)
         with open(out_path, "a") as fw:
             fw.write(f'{fn},rec,{time},"{val}"\n')
 
-    print("========================")
-
 
 def process_wmc_problem(args, out_path, file, fn):
-    print(f"WMC PROCESSING: {file}")
-    print(datetime.datetime.now())
-
     if args.d4:
+        debug_shout("d4", file)
         val, time = run_d4(file)
         with open(out_path, "a") as fw:
             fw.write(f'{fn},d4,{time},"{val}"')
             fw.write("\n")
         
     if args.ganak:
+        debug_shout("ganak", file)
         val, time = run_ganak(file)
         with open(out_path, "a") as fw:
             fw.write(f'{fn},ganak,{time},"{val}"')
             fw.write("\n")
 
-    print("========================")
 
+
+def debug_shout(algo, file):
+    print(f"'{algo}' processing: {file}")
+    print(datetime.datetime.now())
 
 
 if __name__ == "__main__":
