@@ -76,8 +76,6 @@ def run_ganak(infile_cnf):
 
 
 def process_wfomc_problem(args, out_path, file, fn, uee, inc_label):
-    
-
     if args.incremental:
         debug_shout(inc_label, file)
 

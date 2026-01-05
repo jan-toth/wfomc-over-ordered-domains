@@ -35,32 +35,42 @@ timen = [ 0.780277411,  6.890678962, 0.138254166,
           0.344414473,  0.072847287, 0.122502406,
           0.111396789]
 
-wfomc_times = dict()
-ganak_times = dict()
-d4_times = dict()
+# wfomc_times = dict()
+# ganak_times = dict()
+# d4_times = dict()
 
-for root, dirs, files in os.walk("results"):
-    for file in files:
-        if file.endswith("time_wfomc.txt"):
-            problem = file[:-14]
-            with open("results/" + file, "r") as f:
-                for line in f:
-                    val = line
-            wfomc_times[problem] = float(val)
-        elif file.endswith("time_d4.txt"):
-            problem = file[:-11]
-            with open("results/" + file, "r") as f:
-                for line in f:
-                    val = line
-            d4_times[problem] = float(val)
-        elif file.endswith("time_ganak.txt"):
-            problem = file[:-14]
-            with open("results/" + file, "r") as f:
-                for line in f:
-                    val = line
-            ganak_times[problem] = float(val)
-        else:
-            continue
+# for root, dirs, files in os.walk("results"):
+#     for file in files:
+#         if file.endswith("time_wfomc.txt"):
+#             problem = file[:-14]
+#             with open("results/" + file, "r") as f:
+#                 for line in f:
+#                     val = line
+#             wfomc_times[problem] = float(val)
+#         elif file.endswith("time_d4.txt"):
+#             problem = file[:-11]
+#             with open("results/" + file, "r") as f:
+#                 for line in f:
+#                     val = line
+#             d4_times[problem] = float(val)
+#         elif file.endswith("time_ganak.txt"):
+#             problem = file[:-14]
+#             with open("results/" + file, "r") as f:
+#                 for line in f:
+#                     val = line
+#             ganak_times[problem] = float(val)
+#         else:
+#             continue
+
+wfomc_times = {'7': 1.0887395445024595, '8': 5.842742546927184, '23': 0.2564176330342889, '29': 0.5157298829872161, '31': 0.3068431760184467, '33': 0.7212769659236073, '39': 0.2859239849994992, '42': 0.2926057099830359, '45': 0.2823689199994987, '47': 0.1851527990002068, '53': 18.001832076961364, '80': 0.3858968324875604, '82': 0.29996375604878267, '96': 0.3035502004877344, '99': 0.2066000030672512, '102': 4.023518504481672, '130': 20.141938699528055, '137': 0.3033124419939668, '149': 0.24807894949162795, '175': 0.30178787693466796, '193': 0.2015883524636592, '231': 0.27063250895616875, '240': 24.155876634969445, '243': 0.1662960015132739, '269': 0.5331066005528555, '284': 0.192165198004659, '292': 0.26718152947887575, '309': 0.29794619644235354}
+
+ganak_times = {'7': 1.7747068875469267, '8': 53.54183020093478, '23': 8.581602717982605, '29': 0.2367244821507483, '31': 0.030012679984793, '33': 13.097504026023673, '39': 13.230695884907618, '42': 9.05413246783428, '45': 4.0838215129915625, '47': 5.943094187183306, '53': 85.25297441706061, '80': 2.2714220660272986, '82': 3.0267713931389157, '96': 3.103087665047497, '99': 0.0397399109788239, '102': 0.3476852390449494, '130': 18.85023728501983, '137': 17.793905027909204, '149': 48.51640614401549, '175': 7.205785589059815, '193': 8.374740934930742, '231': 17.70793516980484, '240': 24.13673960114829, '243': 7.166414922103286, '269': 9.708882183069363, '284': 14.01688552997075, '292': 2.6823170699644834, '309': 3.500693211099133}
+
+d4_times = {'7': 0.49131480057258153, '8': 45.176801721798256, '23': 2.0082824660930783, '29': 0.1740352010820061, '31': 0.0888036759570241, '33': 2.970803441014141, '39': 3.2988197170197964, '42': 4.889546185964719, '45': 0.779352491023019, '47': 0.8092604810371995, '53': 454.8781051579863, '80': 0.0872410140000283, '82': 0.2069296150002628, '96': 0.1468228651210665, '99': 0.0835060570389032, '102': 0.3042951300740242, '130': 27.414503775071356, '137': 9.326861147070304, '149': 56.71556673804298, '175': 0.6860530148260295, '193': 1.4051926149986684, '231': 6.307371113914996, '240': 8.227010041009635, '243': 0.8692281080875546, '269': 1.584580960217863, '284': 6.040497194975615, '292': 0.2377027519978582, '309': 0.1054083639755845}
+
+inc_times = {'31': 0.956647973973304, '80': 7.028923084028065, '96': 6.78423549910076, '99': 0.3042850650381297, '243': 4.531920961104333}
+
+rec_times = {'7': 46.82273726211861, '23': 9.38613565522246, '29': 9.754820161964744, '31': 0.6610448400024325, '39': 1654.5012432390358, '42': 22.40010702214204, '45': 9.306139456108212, '47': 150.81444963999093, '80': 2.356511011021212, '82': 801.613548056921, '96': 2.3279829910025, '99': 0.3354675220325589, '137': 6903.213407034054, '149': 4502.769066256005, '175': 6.465158109087497, '193': 4.179362782975659, '231': 9.292299068067225, '243': 2.7506594378501177, '284': 388.5784119910095, '292': 4.205862605944276, '309': 200.4634630670771}
         
 
 sorted_indices = np.argsort(timen)
@@ -75,8 +85,16 @@ ganak_np = np.zeros((len(wfomc_times)))
 i = 0
 for problem, val in wfomc_times.items():
     wfomc_np[i] = wfomc_times[problem]
-    ganak_np[i] = ganak_times[problem]
-    d4_np[i] = d4_times[problem]
+    # ganak_np[i] = ganak_times[problem]
+    # d4_np[i] = d4_times[problem]
+    if problem in inc_times:
+        ganak_np[i] = inc_times[problem]
+    else:
+        ganak_np[i] = 0
+    if problem in rec_times:
+        d4_np[i] = rec_times[problem]
+    else:
+        d4_np[i] = 0
     i += 1
 
 bar_width = 0.25
@@ -86,8 +104,10 @@ r3 = [x + bar_width for x in r2]
 
 plt.figure(figsize=(6, 4))
 plt.bar(r1, wfomc_np, color='b', width=bar_width, edgecolor='grey', label='Incremental2')
-plt.bar(r2, d4_np, color='r', width=bar_width, edgecolor='grey', label='d4')
-plt.bar(r3, ganak_np, color='g', width=bar_width, edgecolor='grey', label='ganak')
+# plt.bar(r2, d4_np, color='r', width=bar_width, edgecolor='grey', label='d4')
+# plt.bar(r3, ganak_np, color='g', width=bar_width, edgecolor='grey', label='ganak')
+plt.bar(r2, d4_np, color='r', width=bar_width, edgecolor='grey', label='rec')
+plt.bar(r3, ganak_np, color='g', width=bar_width, edgecolor='grey', label='inc')
 
 plt.xlabel('Problem ID',labelpad=2, fontsize=20)
 plt.ylabel('Runtime (s)',labelpad=-1, fontsize=20)
