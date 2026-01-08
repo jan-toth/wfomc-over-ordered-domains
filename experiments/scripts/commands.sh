@@ -34,11 +34,11 @@ loop_with_timeout() {
 
 # sequences
 # HEAD & TAIL
-loop_with_timeout "uv run auto_counter.py -inc -o seq_ht_results_new.csv" $(ls -v ../models/seq/head_tail/wfomcs/*)
-loop_with_timeout "uv run auto_counter.py -ganak -o seq_ht_results_new.csv" $(ls -v ../models/seq/head_tail/cnf/*_e1.cnf)
-loop_with_timeout "uv run auto_counter.py -d4 -o seq_ht_results_new.csv" $(ls -v ../models/seq/head_tail/cnf/*_e1.cnf)
-loop_with_timeout "uv run auto_counter.py -ganak -o seq_ht_results_new.csv" $(ls -v ../models/seq/head_tail/cnf/*_e3.cnf)
-loop_with_timeout "uv run auto_counter.py -d4 -o seq_ht_results_new.csv" $(ls -v ../models/seq/head_tail/cnf/*_e3.cnf)
+loop_with_timeout "uv run auto_counter.py -inc -o seq_ht_results.csv" $(ls -v ../models/seq/head_tail/wfomcs/*)
+loop_with_timeout "uv run auto_counter.py -ganak -o seq_ht_results.csv" $(ls -v ../models/seq/head_tail/cnf/*_e1.cnf)
+loop_with_timeout "uv run auto_counter.py -d4 -o seq_ht_results.csv" $(ls -v ../models/seq/head_tail/cnf/*_e1.cnf)
+loop_with_timeout "uv run auto_counter.py -ganak -o seq_ht_results.csv" $(ls -v ../models/seq/head_tail/cnf/*_e3.cnf)
+loop_with_timeout "uv run auto_counter.py -d4 -o seq_ht_results.csv" $(ls -v ../models/seq/head_tail/cnf/*_e3.cnf)
 
 
 
