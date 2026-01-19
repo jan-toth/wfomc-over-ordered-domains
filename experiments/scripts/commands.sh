@@ -18,7 +18,7 @@ loop_with_timeout() {
         timeout 3h $cmd -i $fn
 
         if [ $? -eq 124 ]; then
-            echo "Timeout!"
+            echo "Timeout on $fn"
             break
         fi
 
@@ -34,11 +34,37 @@ loop_with_timeout() {
 
 # sequences
 # HEAD & TAIL
-loop_with_timeout "uv run auto_counter.py -inc -o seq_ht_results.csv" $(ls -v ../models/seq/head_tail/wfomcs/*)
-loop_with_timeout "uv run auto_counter.py -ganak -o seq_ht_results.csv" $(ls -v ../models/seq/head_tail/cnf/*_e1.cnf)
-loop_with_timeout "uv run auto_counter.py -d4 -o seq_ht_results.csv" $(ls -v ../models/seq/head_tail/cnf/*_e1.cnf)
-loop_with_timeout "uv run auto_counter.py -ganak -o seq_ht_results.csv" $(ls -v ../models/seq/head_tail/cnf/*_e3.cnf)
-loop_with_timeout "uv run auto_counter.py -d4 -o seq_ht_results.csv" $(ls -v ../models/seq/head_tail/cnf/*_e3.cnf)
+loop_with_timeout "uv run auto_counter.py -inc -o seq_ht_results_new.csv" $(ls -v ../models/seq/head_tail/wfomcs/*)
+# loop_with_timeout "uv run auto_counter.py -ganak -o seq_ht_results_new.csv" $(ls -v ../models/seq/head_tail/cnf/*_e1.cnf)
+# loop_with_timeout "uv run auto_counter.py -d4 -o seq_ht_results_new.csv" $(ls -v ../models/seq/head_tail/cnf/*_e1.cnf)
+# loop_with_timeout "uv run auto_counter.py -ganak -o seq_ht_results_new.csv" $(ls -v ../models/seq/head_tail/cnf/*_e3.cnf)
+# loop_with_timeout "uv run auto_counter.py -d4 -o seq_ht_results_new.csv" $(ls -v ../models/seq/head_tail/cnf/*_e3.cnf)
+
+
+
+
+# combinatorics
+loop_with_timeout "uv run auto_counter.py -inc -l inc2 -ee 2 -o comb_new_results.csv" $(ls -v ../models/comb/new_encode/*)
+loop_with_timeout "uv run auto_counter.py -inc -ee 2 -o comb_new_results.csv" $(ls -v ../models/comb/old_encode/*)
+loop_with_timeout "uv run auto_counter.py -rec -o comb_new_results.csv" $(ls -v ../models/comb/old_encode/*)
+
+
+
+# MLNs
+loop_with_timeout "uv run auto_counter.py -inc -l inc2 -o mln_new_results.csv" $(ls -v ../models/weather/*)
+loop_with_timeout "uv run auto_counter.py -inc -l -inc2 -o mln_new_results.csv" $(ls -v ../models/weather2/new_encode/*)
+loop_with_timeout "uv run auto_counter.py -inc -o mln_new_results.csv" $(ls -v ../models/weather2/old_encode/*)
+loop_with_timeout "uv run auto_counter.py -rec -o mln_new_results.csv" $(ls -v ../models/weather2/old_encode/*)
+
+
+# # Watts-Strogatz
+loop_with_timeout "uv run auto_counter.py -inc -l inc2 -o ws_new_results.csv" $(ls -v ../models/ws/new_encode/*)
+loop_with_timeout "uv run auto_counter.py -rec -o ws_new_results.csv" $(ls -v ../models/ws/old_encode/*)
+loop_with_timeout "uv run auto_counter.py -inc -o ws_new_results.csv" $(ls -v ../models/ws/old_encode/*)
+
+
+
+
 
 
 
