@@ -1,8 +1,0 @@
-\forall X: (\forall Y: (((p_row_PRED(X,Y) <-> (PRED1(X,Y) & p_set_aux_5(X) & p_set_aux_5(Y))) & ((p_set_aux_5(X) & ~(p_set_aux_5(Y))) -> LEQ(X,Y)) & (~(p_tomato_plants_first(X)) | (p_set_tomato_plants(X) & (p_set_tomato_plants(Y) -> ~(p_row_PRED(Y,X))))))))
-& \forall X: (\exists Y: ((p_tomato_plants_first(X) | ~((p_set_tomato_plants(X) & (p_set_tomato_plants(Y) -> ~(p_row_PRED(Y,X))))))))
-
-domain = {c_basil1, c_tomato4, c_tomato3, c_tomato1, c_basil5, c_tomato0, c_tomato5, c_basil0, c_basil3, c_tomato2, c_basil4, c_basil2}
-
-1.0 |p_tomato_plants_first| <= 1.0
-
-p_set_tomato_plants(c_tomato3), p_set_aux_5(c_tomato2), p_set_aux_5(c_tomato5), p_set_aux_5(c_tomato1), p_set_aux_5(c_basil1), p_set_aux_5(c_tomato3), ~p_set_tomato_plants(c_basil1), p_set_tomato_plants(c_tomato0), p_set_aux_5(c_basil5), ~p_set_tomato_plants(c_basil2), ~p_set_tomato_plants(c_basil5), ~p_set_tomato_plants(c_basil3), p_set_aux_5(c_basil2), p_set_aux_5(c_tomato0), p_set_aux_5(c_basil3), p_set_aux_5(c_basil0), p_set_tomato_plants(c_tomato4), ~p_set_tomato_plants(c_basil0), p_set_tomato_plants(c_tomato5), p_set_tomato_plants(c_tomato2), p_set_tomato_plants(c_tomato1), p_set_aux_5(c_basil4), p_set_aux_5(c_tomato4), ~p_set_tomato_plants(c_basil4)

@@ -1,0 +1,8 @@
+\forall X: (\forall Y: (((p_table_PRED(X,Y) <-> (CIRCULAR_PRED(X,Y) & p_set_aux_5(X) & p_set_aux_5(Y))) & ((p_set_aux_5(X) & ~(p_set_aux_5(Y))) -> LEQ(X,Y)) & (~(p_together_people_first(X)) | (p_set_together_people(X) & (p_set_together_people(Y) -> ~(p_table_PRED(Y,X))))))))
+& \forall X: (\exists Y: ((p_together_people_first(X) | ~((p_set_together_people(X) & (p_set_together_people(Y) -> ~(p_table_PRED(Y,X))))))))
+
+domain = {c_Pierre, c_other7, c_other8, c_other5, c_other12, c_other3, c_other4, c_other10, c_other11, c_Thomas, c_other6, c_other0, c_other2, c_other1, c_other9, c_Rosa}
+
+1.0 |p_together_people_first| <= 1.0
+
+p_set_aux_5(c_Rosa), p_set_aux_5(c_Thomas), p_set_together_people(c_Pierre), p_set_aux_5(c_other11), p_set_aux_5(c_other7), ~p_set_together_people(c_other0), ~p_set_together_people(c_other2), ~p_set_together_people(c_other6), ~p_set_together_people(c_other9), p_set_together_people(c_Rosa), ~p_set_together_people(c_other10), p_set_aux_5(c_other0), p_set_aux_5(c_other2), p_set_aux_5(c_other6), ~p_set_together_people(c_other12), p_set_aux_5(c_other9), p_set_aux_5(c_other10), ~p_set_together_people(c_other1), p_set_aux_5(c_other1), p_set_aux_5(c_Pierre), p_set_together_people(c_Thomas), ~p_set_together_people(c_other5), ~p_set_together_people(c_other4), p_set_aux_5(c_other12), ~p_set_together_people(c_other8), ~p_set_together_people(c_other11), p_set_aux_5(c_other5), ~p_set_together_people(c_other7), ~p_set_together_people(c_other3), p_set_aux_5(c_other4), p_set_aux_5(c_other8), p_set_aux_5(c_other3)

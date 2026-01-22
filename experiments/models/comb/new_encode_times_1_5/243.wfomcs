@@ -1,7 +1,0 @@
-\forall X: (\forall Y: (((p_row_PRED(X,Y) <-> (PRED1(X,Y) & p_set_aux_6(X) & p_set_aux_6(Y))) & (p_sons_pred_sons(X,Y) <-> (p_row_PRED(X,Y) & p_set_sons(X) & p_set_sons(Y))) & ((p_set_aux_6(X) & ~(p_set_aux_6(Y))) -> LEQ(X,Y)))))
-
-domain = {c_daughter2, c_son0, c_son4, c_son3, c_daughter3, c_daughter1, c_son2, c_son1, c_daughter0, c_son5}
-
-1.0 |p_sons_pred_sons| >= 1.0
-
-p_set_aux_6(c_daughter3), p_set_sons(c_son5), ~p_set_sons(c_daughter2), p_set_aux_6(c_son1), p_set_aux_6(c_son2), ~p_set_sons(c_daughter1), p_set_sons(c_son0), p_set_aux_6(c_son4), p_set_aux_6(c_son3), p_set_sons(c_son1), ~p_set_sons(c_daughter0), p_set_aux_6(c_daughter2), p_set_sons(c_son2), p_set_aux_6(c_son5), p_set_aux_6(c_daughter1), p_set_sons(c_son4), p_set_sons(c_son3), ~p_set_sons(c_daughter3), p_set_aux_6(c_daughter0), p_set_aux_6(c_son0)

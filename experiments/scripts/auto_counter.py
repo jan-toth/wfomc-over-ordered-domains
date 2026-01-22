@@ -18,13 +18,13 @@ SCRIPT_PATH = Path(__file__).absolute()
 
 OUTPUT_DIR = SCRIPT_PATH.parent.parent.joinpath("results")  # experiments/results
 
-D4_PATH = SCRIPT_PATH.parent.parent.joinpath("d4").joinpath("d4")
-D4_ARGS = ["-mc"]
+D4_PATH = SCRIPT_PATH.parent.parent.joinpath("d4v2").joinpath("d4v2")
+D4_ARGS = []
 
 GANAK_PATH = SCRIPT_PATH.parent.parent.joinpath("ganak").joinpath("ganak")
-GANAK_ARGS = []
+GANAK_ARGS = ["--verb", "0"]
 
-FO2CNF_PATH = SCRIPT_PATH.parent.joinpath("fo2ex2cnf.py")
+GROUNDER_PATH = SCRIPT_PATH.parent.joinpath("grounding.py")
 
 
 def parse_args():
@@ -59,20 +59,26 @@ def run_wfomc(infile, uee, algo=Algo.INCREMENTAL):
     return val, t.elapsed
 
 
-def run_wmc(command, index):
+def run_wmc(command, grep):
     with Timer() as t:
         out = run(command, capture_output=True, check=True)
 
-    val = out.stdout.decode().split('\n')[-index].rstrip().split()[-1]
-    return val, t.elapsed
+        lines = out.stdout.decode().split('\n')
+        for line in reversed(lines):
+            if not line.startswith(grep):
+                continue
+            val = line.rstrip().split()[-1]
+            return val, t.elapsed
+
+    raise Exception("Did not find WMC solution in STDOUT")
 
 
 def run_d4(infile_cnf):
-    return run_wmc([str(D4_PATH.absolute()), infile_cnf] + D4_ARGS, 2)
+    return run_wmc([str(D4_PATH.absolute()), "-i", infile_cnf] + D4_ARGS, 's ')
 
 
 def run_ganak(infile_cnf):
-    return run_wmc([str(GANAK_PATH.absolute()), infile_cnf] + GANAK_ARGS, 3)
+    return run_wmc([str(GANAK_PATH.absolute())] + GANAK_ARGS + [infile_cnf], 'c s exact arb int ')
 
 
 def process_wfomc_problem(args, out_path, file, fn, uee, inc_label):
@@ -133,6 +139,9 @@ if __name__ == "__main__":
     if args.walk is not None:   # "--walk" switch takes precedence
         input_dir = Path(args.walk)
 
+        if args.generate_cnf:
+            run(["uv", "run", str(GROUNDER_PATH.absolute()), "-w", input_dir, "-od", input_dir])
+
         files = [str(input_dir.joinpath(f)) for f in natsorted(os.listdir(input_dir)) if (os.path.isfile(input_dir.joinpath(f)))]
 
         filter_paths = lambda xs, ext: [f for f in xs if os.path.splitext(f)[1] == ext]
@@ -146,27 +155,32 @@ if __name__ == "__main__":
 
         input_dir = p.parent
 
-        wfomcs_paths = []
-        mln_paths = []
-        cnf_paths = []
+        if args.generate_cnf:
+            assert p.suffix == ".wfomcs" or p.suffix == ".mln"
 
-        if os.path.splitext(p)[1] == ".wfomcs":
-            wfomcs_paths.append(str(p))
-        elif os.path.splitext(p)[1] == ".mln":
-            mln_paths.append(str(p))
-        elif os.path.splitext(p)[1] == ".cnf":
-            cnf_paths.append(str(p))
+            fn = os.path.splitext(p)[0]
+            out = f"{fn}.cnf"
+            run(["uv", "run", str(GROUNDER_PATH.absolute()), "-i", str(p), "-of", out])
+
+            wfomcs_paths = []
+            mln_paths = []
+            cnf_paths = [out]
+        else:
+            wfomcs_paths = []
+            mln_paths = []
+            cnf_paths = []
+
+            if os.path.splitext(p)[1] == ".wfomcs":
+                wfomcs_paths.append(str(p))
+            elif os.path.splitext(p)[1] == ".mln":
+                mln_paths.append(str(p))
+            elif os.path.splitext(p)[1] == ".cnf":
+                cnf_paths.append(str(p))
 
     filter_names = lambda xs: [os.path.splitext(f)[0] for f in xs]
     wfomcs_names = filter_names(wfomcs_paths)
     mln_names = filter_names(mln_paths)
     cnf_names = filter_names(cnf_paths)
-
-
-    if args.generate_cnf:
-        # Convert .wfomcs to .cnf
-        for file, fn in zip(wfomcs_paths, wfomcs_names):
-            run(["uv", "run", str(FO2CNF_PATH.absolute()), "-i", file, "-e", "3", "-o", f"{fn}.cnf"])
 
 
     out_path = OUTPUT_DIR.joinpath(args.output_file)

@@ -1,0 +1,6 @@
+\forall X: (\forall Y: (((p_arrangement_NEXT_TO(X,Y) <-> (p_arrangement_PRED(X,Y) | p_arrangement_PRED(Y,X))) & ((p_entity_car_key(Y) & p_entity_house_key(X)) -> p_arrangement_NEXT_TO(X,Y)) & (p_arrangement_PRED(X,Y) <-> (CIRCULAR_PRED(X,Y) & p_set_keys(X) & p_set_keys(Y))) & ((p_set_keys(X) & ~(p_set_keys(Y))) -> LEQ(X,Y)))))
+
+domain = {c_car_key, c_key2, c_key6, c_house_key, c_key3, c_key0, c_key7, c_key4, c_key5, c_key1}
+
+
+p_set_keys(c_key5), ~p_entity_car_key(c_key7), p_set_keys(c_car_key), p_entity_car_key(c_car_key), p_set_keys(c_key1), ~p_entity_house_key(c_key3), ~p_entity_car_key(c_key0), ~p_entity_car_key(c_key2), ~p_entity_house_key(c_key4), ~p_entity_house_key(c_key7), ~p_entity_car_key(c_key6), p_entity_house_key(c_house_key), p_set_keys(c_key3), ~p_entity_house_key(c_key6), ~p_entity_car_key(c_key5), ~p_entity_car_key(c_house_key), ~p_entity_house_key(c_key2), ~p_entity_house_key(c_key0), p_set_keys(c_key4), ~p_entity_house_key(c_car_key), p_set_keys(c_key7), ~p_entity_car_key(c_key1), ~p_entity_house_key(c_key5), p_set_keys(c_key0), p_set_keys(c_key2), p_set_keys(c_key6), ~p_entity_house_key(c_key1), ~p_entity_car_key(c_key3), p_set_keys(c_house_key), ~p_entity_car_key(c_key4)
