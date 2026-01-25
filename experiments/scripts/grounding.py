@@ -568,8 +568,15 @@ if __name__ == '__main__':
             print(f"Processed {path}")
 
     else:
-        assert args.input is not None and args.output_file is not None
+        assert args.input is not None
+        
+        if args.output_file is not None:
+            out_file = args.output_dir is not None
+        else:
+            p = Path(args.input)
+            fname = f"{p.stem}.cnf"
+            out_file = Path(args.output_dir).joinpath(fname)
 
         ext = os.path.splitext(args.input)[1]
         assert ext == ".wfomcs" or ext == ".mln"
-        ground(args.input, args.output_file)
+        ground(args.input, str(out_file))
