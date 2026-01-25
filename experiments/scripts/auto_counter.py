@@ -50,8 +50,13 @@ def parse_args():
     return args
 
 
-def run_wfomc(infile, uee, algo=Algo.INCREMENTAL):
+def run_wfomc(infile, algo=Algo.INCREMENTAL):
     problem = parse_input(infile)
+
+    if problem.cardinality_constraint and algo == Algo.INCREMENTAL:
+        uee = UnaryEvidenceEncoding.PC
+    else:
+        uee = UnaryEvidenceEncoding.CCS
         
     with Timer() as t:
         val = compute_wfomc(problem, algo, uee)
@@ -81,17 +86,17 @@ def run_ganak(infile_cnf):
     return run_wmc([str(GANAK_PATH.absolute())] + GANAK_ARGS + [infile_cnf], 'c s exact arb int ')
 
 
-def process_wfomc_problem(args, out_path, file, fn, uee, inc_label):
+def process_wfomc_problem(args, out_path, file, fn, inc_label):
     if args.incremental:
         debug_shout(inc_label, file)
 
-        val, time = run_wfomc(file, uee, Algo.INCREMENTAL)
+        val, time = run_wfomc(file, Algo.INCREMENTAL)
         with open(out_path, "a") as fw:
             fw.write(f'{fn},{inc_label},{time},"{val}"\n')
 
     if args.recursive:
         debug_shout("recursive", file)
-        val, time = run_wfomc(file, uee, Algo.RECURSIVE)
+        val, time = run_wfomc(file, Algo.RECURSIVE)
         with open(out_path, "a") as fw:
             fw.write(f'{fn},rec,{time},"{val}"\n')
 
@@ -184,7 +189,6 @@ if __name__ == "__main__":
 
 
     out_path = OUTPUT_DIR.joinpath(args.output_file)
-    uee = UnaryEvidenceEncoding.PC if args.evidenceencode == 2 else UnaryEvidenceEncoding.CCS
     inc_label = args.label if args.label is not None else "inc"
 
     if not os.path.exists(out_path):
@@ -195,11 +199,11 @@ if __name__ == "__main__":
 
     for file, fn in zip(wfomcs_paths, wfomcs_names):
         fn = get_problem_name(fn)
-        process_wfomc_problem(args, out_path, file, fn, uee, inc_label)
+        process_wfomc_problem(args, out_path, file, fn, inc_label)
 
     for file, fn in zip(mln_paths, mln_names):
         fn = get_problem_name(fn)
-        process_wfomc_problem(args, out_path, file, fn, uee, inc_label)
+        process_wfomc_problem(args, out_path, file, fn, inc_label)
 
     for file, fn in zip(cnf_paths, cnf_names):
         fn = get_problem_name(fn)
