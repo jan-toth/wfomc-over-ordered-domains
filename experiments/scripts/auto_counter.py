@@ -79,7 +79,32 @@ def run_wmc(command, grep):
 
 
 def run_d4(infile_cnf):
-    return run_wmc([str(D4_PATH.absolute()), "-i", infile_cnf] + D4_ARGS, 's ')
+    with open(infile_cnf, "r") as fr:
+        header = fr.readline().split()
+
+        line = fr.readline()
+        if line.startswith("c ind"):
+            # Create a temporary CNF file with syntax required by d4 solver
+            pcnf_file = f"{os.path.splitext(infile_cnf)[0]}.pcnf"
+            with open(pcnf_file, "w") as fw:
+                fw.write(f"p pcnf {header[2]} {header[3]}\n")
+
+                # Change lines 'c ind ...' to 'vp ...'
+                while line.startswith("c ind"):
+                    fw.write("vp")
+                    fw.write(line[5:])
+                    line = fr.readline()
+
+                fw.write(line)
+                for line in fr.readlines():
+                    fw.write(line)
+
+            ret = run_wmc([str(D4_PATH.absolute()), "-i", pcnf_file] + D4_ARGS, 's ')
+            os.remove(pcnf_file)
+        else:
+            ret = run_wmc([str(D4_PATH.absolute()), "-i", infile_cnf] + D4_ARGS, 's ')
+            
+    return ret
 
 
 def run_ganak(infile_cnf):

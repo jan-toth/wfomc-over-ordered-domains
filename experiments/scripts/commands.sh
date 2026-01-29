@@ -4,10 +4,11 @@
 ##            SETUP
 ## =============================
 # pwd == {{wfomc-over-ordered-domains}}
-uv sync
-
 # cd experiments/scripts
 # mkdir ../results
+# bash commands.sh
+
+uv sync
 
 
 loop_with_timeout() {
@@ -38,7 +39,6 @@ loop_with_timeout_without_break() {
 
     done
 }
-
 
 ## =============================
 ##        INCREMENTAL (LO)
