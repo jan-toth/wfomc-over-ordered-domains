@@ -22,6 +22,7 @@ dependencies = [
     "pynauty==2.8.6",
     "python-flint>=0.8.0",
     "python-sat>=1.8.dev17",
+    "seaborn>=0.13.2",
     "symengine>=0.14.1",
     "sympy>=1.14.0",
     "tqdm>=4.67.1",

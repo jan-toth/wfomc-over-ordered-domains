@@ -1,278 +1,194 @@
-from pathlib import Path
-
-import natsort
-
-import numpy as np
+import argparse
 import pandas as pd
+import seaborn as sns
 import matplotlib.pyplot as plt
+import re
+import sys
 
-RESULTS_PATH = Path(__file__).absolute().parent.parent.joinpath("results").joinpath("FROM_INFERENCE")
+# --- Plotting Functions ---
 
+def plot_comparison(csv_path, algorithms=None, log_scale=True, output_file=None):
+    """
+    Generates a grouped bar plot comparing runtimes across different problems.
+    """
+    print(f"Loading data from {csv_path}...")
+    try:
+        df = pd.read_csv(csv_path)
+    except FileNotFoundError:
+        print(f"Error: File {csv_path} not found.")
+        sys.exit(1)
 
-# inc = ht[ht['algo'] == 'inc']
-# d4 = ht[ht['algo'] == 'd4']
-# ganak = ht[ht['algo'] == 'ganak']
+    # Clean whitespace
+    df['problem'] = df['problem'].astype(str).str.strip()
+    df['algo'] = df['algo'].astype(str).str.strip()
 
-# inc = ht[ht['problem'] == 'inc']
-# inc_times = inc[['problem', 'time']].groupby('problem').median()
-# inc_times.sort_index(key=lambda x: np.argsort(natsort.index_natsorted(inc_times.index)))
+    # Filter algorithms
+    if algorithms:
+        df = df[df['algo'].isin(algorithms)]
+    
+    if df.empty:
+        print("Error: No data available after filtering. Check algorithm names.")
+        sys.exit(1)
 
+    # Aggregate: Median runtime per problem/algo pair
+    df_agg = df.groupby(['problem', 'algo'])['time'].median().reset_index()
+    
+    # Sort alphanumerically
+    df_agg.sort_values(by='problem', inplace=True)
 
-def plot_seq(df, algo):
-    df = df[df["algo"] == algo]
-    times = df[['problem', 'time']].groupby('problem').median()
-    times = times.sort_index(key=lambda x: np.argsort(natsort.index_natsorted(times.index)))
-    return times
+    # Plotting
+    plt.figure(figsize=(12, 6))
+    sns.set_theme(style="whitegrid")
 
-        
-def split_wmc(df):
-    e1_idx = df.index.str.endswith("_e1")
-    e3_idx = df.index.str.endswith("_e3")
-    def build_new_wmc_df(df, idx):
-        filtered = df[idx]
-        df.index.str.endswith("_e1")
-        ids = [int(x.split('_')[0]) for x in filtered.index]
-        times = filtered.to_numpy()
-        return pd.DataFrame(times, index=ids, columns=['Time [s]'])
-    return build_new_wmc_df(df, e1_idx), build_new_wmc_df(df, e3_idx)
+    bar_plot = sns.barplot(
+        data=df_agg, 
+        x='problem', 
+        y='time', 
+        hue='algo',
+        palette='viridis', 
+        edgecolor='black'
+    )
 
+    if log_scale:
+        bar_plot.set_yscale("log")
+        plt.ylabel("Median Runtime (s) [Log Scale]")
+    else:
+        plt.ylabel("Median Runtime (s)")
 
-def process_time_measurements(times):
-    times = times.sort_index(key=lambda x: np.argsort(natsort.index_natsorted(times.index)))
-    return times.index.astype(int).to_numpy(), times.to_numpy()
+    plt.xlabel("Problem ID")
+    plt.title("Runtime Comparison by Problem")
+    plt.legend(title="Algorithm", bbox_to_anchor=(1.05, 1), loc='upper left')
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
 
-
-def foo(df):
-    algs = df.algo.unique()
-    out = dict()
-    for alg in algs:
-        select = df[df.algo == alg]
-        # select = select[select.problem.str.split("_")[0].astype(int) < 60]
-        times = select[['problem', 'time']].groupby('problem').median()
-        # if alg in {'ganak', 'd4'}:
-        #     e1_times, e3_times = split_wmc(times)
-        #     # out[f'{alg}_e1'] = process_time_measurements(e1_times)
-        #     out[f'{alg}_e3'] = process_time_measurements(e3_times)
-        # else:
-        out[alg] = process_time_measurements(times)
-    return out
-
-
-# if __name__ == "__main__":
-# ht = pd.read_csv(str(RESULTS_PATH.joinpath("seq_ht_results.csv")), dtype={'problem': str, 'algo': str, "time": np.float64, "wfomc": str})
-# ht = pd.read_csv(str(RESULTS_PATH.joinpath("seq_to_results.csv")), dtype={'problem': str, 'algo': str, "time": np.float64, "wfomc": str})
-ht = pd.read_csv(str(RESULTS_PATH.joinpath("comb_smaller.csv")), dtype={'problem': str, 'algo': str, "time": np.float64, "wfomc": str})
-data = foo(ht)
-
-fig, ax = plt.subplots()
-for label, (xs, ys) in data.items():
-    line, = ax.plot(xs, ys, marker='x')
-    line.set_label(str(label))
-
-ax.set_yscale('log', base=10)
-ax.legend()
-fig.show()
+    if output_file:
+        plt.savefig(output_file, dpi=300)
+        print(f"Comparison plot saved to {output_file}")
+    else:
+        plt.show()
 
 
-# ht_e3
-data = {'inc':  
-        (np.array([   1,    5,   10,   15,   20,   25,   30,
-         35,   40,   45,   50]), 
-         np.array([[0.11248173704370856], [0.0173521 ], [0.01744301],[0.01859813], [0.02184571], [0.0210789 ], [0.02495382], [0.028465  ], [0.03244657], [0.03672267], [0.03859934]])),
-       'd4_e3': (np.array([ 1,  5, 10, 15, 20, 25]), np.array([[7.60122435e-02],
-       [8.14094406e-02],
-       [1.74403800e-01],
-       [4.05455209e+00],
-       [1.60691391e+02],
-       [6.59535544e+03]])),
-       'ganak_e3': (np.array([ 1,  5, 10, 15, 20, 25]), np.array([[1.64388660e-02],
-       [4.15949600e-01],
-       [1.35748916e+00],
-       [3.57003044e+00],
-       [1.99965036e+01],
-       [5.37600360e+02]]))}
+def plot_scaling(csv_path, prefix, algorithms=None, log_scale=True, output_file=None):
+    """
+    Generates a line plot showing how runtime scales with domain size.
+    """
+    print(f"Loading data from {csv_path}...")
+    try:
+        df = pd.read_csv(csv_path)
+    except FileNotFoundError:
+        print(f"Error: File {csv_path} not found.")
+        sys.exit(1)
 
-# to_e3
-data = {'inc': (np.array([   1,    5,   10,   15,   20]), np.array([[1.04285287e-01],
-       [1.11878021e-02],
-       [1.23111160e-02],
-       [1.29207500e-02],
-       [1.58771490e-02]])),
-       'd4_e3': (np.array([ 1,  5, 10]), np.array([[ 0.08027144],
-       [ 0.09102683],
-       [11.07617112]])),
-       'ganak_e3': (np.array([ 1,  5, 10]), np.array([[7.14070699e-03],
-       [5.97555159e-01],
-       [1.00279055e+01]]))
-       }
+    df['problem'] = df['problem'].astype(str).str.strip()
+    df['algo'] = df['algo'].astype(str).str.strip()
 
-# to_e1
-data = {'inc': (np.array([   1,  50,  100,  150,  200,  250,  300,
-        350,  400,  450,  500,  550,  600,  650,  700,  750,  800,  850,
-        900,  950, 1000]), np.array([[1.04285287e-01],
-       [3.96666119e-02],
-       [1.29109192e-01],
-       [3.11106184e-01],
-       [6.24314907e-01],
-       [1.08257548e+00],
-       [1.82055752e+00],
-       [2.92282663e+00],
-       [4.41337502e+00],
-       [6.70655675e+00],
-       [9.87348176e+00],
-       [1.41769749e+01],
-       [2.02000167e+01],
-       [2.82114775e+01],
-       [3.84738968e+01],
-       [5.30975885e+01],
-       [7.04133823e+01],
-       [9.12541554e+01],
-       [1.18175026e+02],
-       [1.51421025e+02],
-       [1.89496298e+02]])), 'd4_e1': (np.array([   1,   50,  100,  150,  200,  250,  300,  350,  400,  450,
-        500,  550,  600,  650,  700,  750,  800,  850,  900,  950, 1000]), np.array([[ 0.08613718],
-       [ 0.09566074],
-       [ 0.12731311],
-       [ 0.17117484],
-       [ 0.2656964 ],
-       [ 0.424989  ],
-       [ 0.67541052],
-       [ 1.03185161],
-       [ 1.5633107 ],
-       [ 2.29812105],
-       [ 3.3259861 ],
-       [ 4.66343942],
-       [ 6.36439903],
-       [ 8.49980692],
-       [11.2382047 ],
-       [14.44908837],
-       [18.76536804],
-       [23.79331239],
-       [29.29521735],
-       [36.18574453],
-       [43.53956038]])), 'ganak_e1': (np.array([  1,  50, 100, 150, 200, 250]), np.array([[1.85237125e-02],
-       [7.55463081e+00],
-       [2.91184267e+01],
-       [6.65037574e+01],
-       [1.17885616e+02],
-       [1.86812002e+02]]))}
+    # Filter by problem prefix
+    df = df[df['problem'].str.startswith(prefix)].copy()
+    if df.empty:
+        print(f"Error: No data found for problem prefix '{prefix}'.")
+        sys.exit(1)
 
-# comb
-data = {'inc2': (np.array([  7,   8,  23,  29,  31,  33,  39,  42,  45,  47,  53,  80,  82,
-        96,  99, 102, 130, 137, 149, 175, 193, 231, 240, 243, 269, 284,
-       292, 309]), np.array([[ 1.08873954],
-       [ 5.84274255],
-       [ 0.25641763],
-       [ 0.51572988],
-       [ 0.30684318],
-       [ 0.72127697],
-       [ 0.28592398],
-       [ 0.29260571],
-       [ 0.28236892],
-       [ 0.1851528 ],
-       [18.00183208],
-       [ 0.38589683],
-       [ 0.29996376],
-       [ 0.3035502 ],
-       [ 0.2066    ],
-       [ 4.0235185 ],
-       [20.1419387 ],
-       [ 0.30331244],
-       [ 0.24807895],
-       [ 0.30178788],
-       [ 0.20158835],
-       [ 0.27063251],
-       [24.15587663],
-       [ 0.166296  ],
-       [ 0.5331066 ],
-       [ 0.1921652 ],
-       [ 0.26718153],
-       [ 0.2979462 ]])), 'd4': (np.array([  7,   8,  23,  29,  31,  33,  39,  42,  45,  47,  53,  80,  82,
-        96,  99, 102, 130, 137, 149, 175, 193, 231, 240, 243, 269, 284,
-       292, 309]), np.array([[4.91314801e-01],
-       [4.51768017e+01],
-       [2.00828247e+00],
-       [1.74035201e-01],
-       [8.88036760e-02],
-       [2.97080344e+00],
-       [3.29881972e+00],
-       [4.88954619e+00],
-       [7.79352491e-01],
-       [8.09260481e-01],
-       [4.54878105e+02],
-       [8.72410140e-02],
-       [2.06929615e-01],
-       [1.46822865e-01],
-       [8.35060570e-02],
-       [3.04295130e-01],
-       [2.74145038e+01],
-       [9.32686115e+00],
-       [5.67155667e+01],
-       [6.86053015e-01],
-       [1.40519261e+00],
-       [6.30737111e+00],
-       [8.22701004e+00],
-       [8.69228108e-01],
-       [1.58458096e+00],
-       [6.04049719e+00],
-       [2.37702752e-01],
-       [1.05408364e-01]])), 'ganak': (np.array([  7,   8,  23,  29,  31,  33,  39,  42,  45,  47,  53,  80,  82,
-        96,  99, 102, 130, 137, 149, 175, 193, 231, 240, 243, 269, 284,
-       292, 309]), np.array([[1.77470689e+00],
-       [5.35418302e+01],
-       [8.58160272e+00],
-       [2.36724482e-01],
-       [3.00126800e-02],
-       [1.30975040e+01],
-       [1.32306959e+01],
-       [9.05413247e+00],
-       [4.08382151e+00],
-       [5.94309419e+00],
-       [8.52529744e+01],
-       [2.27142207e+00],
-       [3.02677139e+00],
-       [3.10308767e+00],
-       [3.97399110e-02],
-       [3.47685239e-01],
-       [1.88502373e+01],
-       [1.77939050e+01],
-       [4.85164061e+01],
-       [7.20578559e+00],
-       [8.37474093e+00],
-       [1.77079352e+01],
-       [2.41367396e+01],
-       [7.16641492e+00],
-       [9.70888218e+00],
-       [1.40168855e+01],
-       [2.68231707e+00],
-       [3.50069321e+00]])), 'rec': (np.array([  7,  23,  29,  31,  39,  42,  45,  47,  80,  82,  96,  99, 137,
-       149, 175, 193, 231, 243, 284, 292, 309]), np.array([[4.68227373e+01],
-       [9.38613566e+00],
-       [9.75482016e+00],
-       [6.61044840e-01],
-       [1.65450124e+03],
-       [2.24001070e+01],
-       [9.30613946e+00],
-       [1.50814450e+02],
-       [2.35651101e+00],
-       [8.01613548e+02],
-       [2.32798299e+00],
-       [3.35467522e-01],
-       [6.90321341e+03],
-       [4.50276907e+03],
-       [6.46515811e+00],
-       [4.17936278e+00],
-       [9.29229907e+00],
-       [2.75065944e+00],
-       [3.88578412e+02],
-       [4.20586261e+00],
-       [2.00463463e+02]])), 'inc': (np.array([ 31,  80,  96,  99, 243]), np.array([[0.95664797],
-       [7.02892308],
-       [6.7842355 ],
-       [0.30428507],
-       [4.53192096]]))}
+    # Extract Domain Size
+    def extract_size(row_id):
+        # Remove prefix
+        remainder = row_id[len(prefix):]
+        # Remove leading separators (e.g. '_', '-')
+        clean = re.sub(r'^[^0-9]+', '', remainder)
+        try:
+            return int(clean)
+        except ValueError:
+            return None
+
+    df['domain_size'] = df['problem'].apply(extract_size)
+    df.dropna(subset=['domain_size'], inplace=True)
+
+    # Filter algorithms
+    if algorithms:
+        df = df[df['algo'].isin(algorithms)]
+
+    if df.empty:
+        print("Error: No data available after filtering.")
+        sys.exit(1)
+
+    # Aggregate
+    df_agg = df.groupby(['domain_size', 'algo'])['time'].median().reset_index()
+
+    # Plotting
+    plt.figure(figsize=(10, 6))
+    sns.set_theme(style="whitegrid")
+
+    sns.lineplot(
+        data=df_agg,
+        x='domain_size',
+        y='time',
+        hue='algo',
+        style='algo',
+        markers=True,
+        dashes=False,
+        markersize=8,
+        linewidth=2
+    )
+
+    if log_scale:
+        plt.yscale("log")
+        plt.ylabel("Median Runtime (s) [Log Scale]")
+    else:
+        plt.ylabel("Median Runtime (s)")
+
+    plt.xlabel("Domain Size")
+    plt.title(f"Scaling Behavior: {prefix}")
+    plt.legend(title="Algorithm", bbox_to_anchor=(1.05, 1), loc='upper left')
+    plt.tight_layout()
+
+    if output_file:
+        plt.savefig(output_file, dpi=300)
+        print(f"Scaling plot saved to {output_file}")
+    else:
+        plt.show()
 
 
-d = dict()
-for key, val in zip(data['inc'][0], data['inc'][1]):
-    d[str(key)] = float(val)
+def main():
+    parser = argparse.ArgumentParser(description="WFOMC Benchmark Plotter")
+    subparsers = parser.add_subparsers(dest="mode", required=True, help="Plotting mode")
+
+    # Common arguments
+    def add_common_args(p):
+        p.add_argument("input_csv", help="Path to input CSV file")
+        p.add_argument("-o", "--output", help="Path to save output image (e.g., plot.png)")
+        p.add_argument("-a", "--algos", nargs="+", help="List of algorithms to include")
+        p.add_argument("--linear", action="store_true", help="Use linear scale instead of log scale")
+
+    # Subcommand: comparison (Bar Chart)
+    parser_comp = subparsers.add_parser("bar", help="Generate grouped bar chart for multiple problems")
+    add_common_args(parser_comp)
+
+    # Subcommand: scaling (Line Chart)
+    parser_scale = subparsers.add_parser("scale", help="Generate scaling curve for a specific problem")
+    add_common_args(parser_scale)
+    parser_scale.add_argument("-p", "--prefix", required=True, help="Problem name prefix (e.g., 'ht')")
+
+    args = parser.parse_args()
+
+    # Determine log scale (Default is True, unless --linear is passed)
+    use_log_scale = not args.linear
+
+    if args.mode == "bar":
+        plot_comparison(
+            csv_path=args.input_csv, 
+            algorithms=args.algos, 
+            log_scale=use_log_scale, 
+            output_file=args.output
+        )
+
+    elif args.mode == "scale":
+        plot_scaling(
+            csv_path=args.input_csv, 
+            prefix=args.prefix, 
+            algorithms=args.algos, 
+            log_scale=use_log_scale, 
+            output_file=args.output
+        )
+
+
+if __name__ == "__main__":
+    main()
