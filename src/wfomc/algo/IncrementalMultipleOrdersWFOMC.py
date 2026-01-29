@@ -139,6 +139,13 @@ def _incremental_wfomc_with_predecessor_and_successor(context: WFOMCContext):
         n_cells = len(cells)
         domain_size = len(domain)
 
+        if n_cells > 1:
+            raise Exception("More than 1 cell not supported for PRED + SUCC yet!")
+        
+        for key, val in predecessor_preds.items():
+            if key > 1:
+                raise Exception(f"Predecessor {key} not supported by PRED + SUCC!")
+
         def only(h_old, sigma, rho_single, rho, cell, m, pred):
             out = []
             W_cell = cell_graph.get_cell_weight(cell)
