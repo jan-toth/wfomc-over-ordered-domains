@@ -67,16 +67,16 @@ loop_with_timeout "uv run auto_counter.py -d4 -o books.csv" $(ls -v ../models/se
 # COMBINATORICS
 
 # Original MATH problems
-loop_with_timeout_without_break "uv run auto_counter.py -inc -l inc2 -o combinatorics.csv" $(ls -v ../models/comb/original/new_encode/*.wfomcs)
-loop_with_timeout_without_break "uv run auto_counter.py -inc -o combinatorics.csv" $(ls -v ../models/comb/original/old_encode/*.wfomcs)
-loop_with_timeout_without_break "uv run auto_counter.py -rec -o combinatorics.csv" $(ls -v ../models/comb/original/old_encode/*.wfomcs)
-loop_with_timeout_without_break "uv run auto_counter.py -ganak -o combinatorics.csv" $(ls -v ../models/comb/original/cnf/*.cnf)
-loop_with_timeout_without_break "uv run auto_counter.py -d4 -o combinatorics.csv" $(ls -v ../models/comb/original/cnf/*.cnf)
+loop_with_timeout_without_break "uv run auto_counter.py -inc -l inc2 -o math.csv" $(ls -v ../models/comb/original/new_encode/*.wfomcs)
+loop_with_timeout_without_break "uv run auto_counter.py -inc -o math.csv" $(ls -v ../models/comb/original/old_encode/*.wfomcs)
+loop_with_timeout_without_break "uv run auto_counter.py -rec -o math.csv" $(ls -v ../models/comb/original/old_encode/*.wfomcs)
+loop_with_timeout_without_break "uv run auto_counter.py -ganak -o math.csv" $(ls -v ../models/comb/original/cnf/*.cnf)
+loop_with_timeout_without_break "uv run auto_counter.py -d4 -o math.csv" $(ls -v ../models/comb/original/cnf/*.cnf)
 
 # Twice the domain
-loop_with_timeout_without_break "uv run auto_counter.py -inc -l inc2 -o combinatorics.csv" $(ls -v ../models/comb/times_2/new_encode/*.wfomcs)
-loop_with_timeout_without_break "uv run auto_counter.py -ganak -o combinatorics.csv" $(ls -v ../models/comb/times_2/cnf/*.cnf)
-loop_with_timeout_without_break "uv run auto_counter.py -d4 -o combinatorics.csv" $(ls -v ../models/comb/times_2/cnf/*.cnf)
+loop_with_timeout_without_break "uv run auto_counter.py -inc -l inc2 -o math_x2.csv" $(ls -v ../models/comb/times_2/new_encode/*.wfomcs)
+loop_with_timeout_without_break "uv run auto_counter.py -ganak -o math_x2.csv" $(ls -v ../models/comb/times_2/cnf/*.cnf)
+loop_with_timeout_without_break "uv run auto_counter.py -d4 -o math_x2.csv" $(ls -v ../models/comb/times_2/cnf/*.cnf)
 
 
 
