@@ -350,6 +350,9 @@ class CellGraph(object):
                 tables[(cell, other_cell)] = TwoTable(
                     models_2, gnd_lits
                 )
+
+        #for cells, table in tables.items():
+        #    print(cells, table.models)
         return tables
 
 
@@ -829,6 +832,7 @@ def build_cell_graphs(formula: QFFormula,
                       first_pred: Pred = None,
                       last_pred: Pred = None) \
         -> Generator[tuple[CellGraph, RingElement]]:
+
     nullary_atoms = [atom for atom in formula.atoms() if atom.pred.arity == 0]
     if len(nullary_atoms) == 0:
         logger.info('No nullary atoms found, building a single cell graph')
@@ -858,7 +862,7 @@ def build_cell_graphs(formula: QFFormula,
                 continue
             if not optimized:
                 cell_graph = CellGraph(
-                    subs_formula, get_weight, leq_pred, predecessor_preds
+                    subs_formula, get_weight, leq_pred, predecessor_preds, successor_pred=successor_pred, domain_size=domain_size
                 )
             else:
                 if partition_constraint is None:

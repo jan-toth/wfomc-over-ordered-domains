@@ -133,9 +133,10 @@ def incremental_wfomc(context: WFOMCContext,
                         (ivec, new_last_cells, first_cell),
                         (Rational(0, 1), ())
                     )[0]
-                    table[(tuple(ivec), new_last_cells, first_cell)] = (
-                        w_new, new_ccs
-                    )
+                    if w_new != 0:
+                        table[(tuple(ivec), new_last_cells, first_cell)] = (
+                            w_new, new_ccs
+                        )
         res = res + weight * sum(w for w, _ in table.values())
 
     if context.unary_evidence_encoding == \
