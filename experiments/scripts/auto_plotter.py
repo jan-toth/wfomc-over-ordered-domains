@@ -8,23 +8,40 @@ import matplotlib.pyplot as plt
 
 from natsort import natsorted
 
-
-HIGH_CONTRAST_PALLETTE = [
-    "#e41a1c",    # red
-    "#377eb8",    # blue
-    "#4daf4a",    # green
-    "#ff7f00",      # orange   
-    "#984ea3",      # purple
-    "#a65628"       # brown
-]
-
 RENAME_MAP = {
-    'inc': 'Incremental',
+    'inc': 'Incremental_v1',
     'rec': 'Recursive',
     'inc2': 'Incremental_v2',
     'd4': 'd4',
     'ganak': 'ganak'
 }
+
+COLOR_MAP = {
+    'inc': "#984ea3",   # purple
+    'rec': "#ff7f00",   # orange
+    'inc2': "#e41a1c",  # red
+    'd4': "#4daf4a",    # green
+    'ganak': "#377eb8"  # blue
+}
+FALLBACK_COLORS = ["#a65628", "#f781bf", "#999999", "#a6cee3", "#b2df8a"]
+
+
+def _get_palette(algorithms):
+    """Constructs a list of colors corresponding exactly to the input list of algorithms."""
+    palette = []
+    fallback_idx = 0
+
+    for algo in algorithms:
+        # Check if we have a fixed color for this algo
+        if algo in COLOR_MAP:
+            palette.append(COLOR_MAP[algo])
+        else:
+            # Assign a fallback color if not defined
+            palette.append(FALLBACK_COLORS[fallback_idx % len(FALLBACK_COLORS)])
+            fallback_idx += 1
+
+    return palette
+
 
 
 def _update_legend_labels(ax):
@@ -108,7 +125,7 @@ def plot_bars(csv_path, algorithms=None, sort_by_algo=None, legend_loc=None, log
         y='time', 
         hue='algo',
         hue_order=hue_order,
-        palette=HIGH_CONTRAST_PALLETTE[:len(hue_order)], 
+        palette=_get_palette(hue_order), 
         edgecolor='black'
     )
 
@@ -186,7 +203,7 @@ def plot_scaling(csv_path, prefix, suffix=None, algorithms=None, min_size=None, 
         hue_order=hue_order,
         style='algo',
         style_order=hue_order,
-        palette=HIGH_CONTRAST_PALLETTE[:len(hue_order)],
+        palette=_get_palette(hue_order),
         markers=True,
         dashes=False,
         markersize=8,
@@ -220,6 +237,91 @@ def plot_scaling(csv_path, prefix, suffix=None, algorithms=None, min_size=None, 
         plt.show()
 
 
+def plot_cactus(csv_path, algorithms=None, timeout=None, legend_loc=None, log_scale=True, output_file=None):
+    """
+    Generates a Cactus Plot:
+    X-axis: Number of solved instances (cumulative)
+    Y-axis: Time taken to solve the Nth fastest instance (sorted independently per algo)
+    """
+    print(f"Loading data from {csv_path}...")
+    try: df = pd.read_csv(csv_path)
+    except FileNotFoundError: sys.exit(1)
+    df['algo'] = df['algo'].astype(str).str.strip()
+
+    # Filter Algorithms
+    if algorithms:
+        df = df[df['algo'].isin(algorithms)]
+        hue_order = algorithms
+    else:
+        hue_order = natsorted(df['algo'].unique())
+
+    # Aggregate (Median over runs)
+    # This gives one time per (problem, algo) pair
+    df_agg = df.groupby(['problem', 'algo'])['time'].median().reset_index()
+
+    # Apply Timeout (Treat > timeout as unsolved)
+    if timeout:
+        df_agg = df_agg[df_agg['time'] <= timeout]
+
+    if df_agg.empty:
+        print("Error: No solved instances found (check data or timeout).")
+        sys.exit(1)
+
+    # Prepare Cactus Data
+    cactus_data = []
+
+    for algo in hue_order:
+        # Get all runtimes for this algo, sorted ascending
+        times = sorted(df_agg[df_agg['algo'] == algo]['time'].tolist())
+
+        # Create cumulative count (1st solved, 2nd solved, ...)
+        for i, time in enumerate(times, start=1):
+            cactus_data.append({
+                'algo': algo,
+                'solved_count': i,
+                'time': time
+            })
+
+    df_cactus = pd.DataFrame(cactus_data)
+
+    # Plotting
+    plt.figure(figsize=(10, 6))
+    sns.set_theme(style="whitegrid")
+
+    # Use lineplot without markers usually, but markers help see distinct problems
+    ax = sns.lineplot(
+        data=df_cactus,
+        x='solved_count',
+        y='time',
+        hue='algo',
+        hue_order=hue_order,
+        style='algo',
+        style_order=hue_order,
+        palette=_get_palette(hue_order),
+        markers=True,
+        dashes=False,
+        linewidth=2
+    )
+
+    if log_scale:
+        ax.set_yscale("log")
+    plt.ylabel("Runtime [s]")
+
+    plt.xlabel("Number of Solved Instances")
+
+    # Legend
+    plt.legend(loc=legend_loc)
+    _update_legend_labels(ax)
+
+    plt.tight_layout()
+
+    if output_file:
+        plt.savefig(output_file, dpi=300)
+        print(f"Cactus plot saved to {output_file}")
+    else:
+        plt.show()
+
+
 def main():
     parser = argparse.ArgumentParser(description="WFOMC Benchmark Plotter")
     subparsers = parser.add_subparsers(dest="mode", required=True, help="Plotting mode")
@@ -245,6 +347,12 @@ def main():
     parser_scale.add_argument("--min", type=int, help="Minimum domain size to include")
     parser_scale.add_argument("--max", type=int, help="Maximum domain size to include")
     parser_scale.add_argument("--xticks", help="X-axis ticks as Python range <start>,<stop>,<step>")
+
+
+    # Subcommand: cactus (Cactus Plot)
+    parser_cactus = subparsers.add_parser("cactus", help="Cactus plot")
+    add_common_args(parser_cactus)
+    parser_cactus.add_argument("--timeout", type=float, help="Cutoff in seconds")
 
     args = parser.parse_args()
 
@@ -273,37 +381,16 @@ def main():
             log_scale=use_log_scale, 
             output_file=args.output
         )
+    elif args.mode == "cactus":
+        plot_cactus(
+            csv_path=args.input_csv,
+            algorithms=args.algos,
+            timeout=args.timeout,
+            legend_loc=args.legend,
+            log_scale=use_log_scale,
+            output_file=args.output
+        )
 
 
 if __name__ == "__main__":
     main()
-
-
-# cd experiments/scripts
-# mkdir ../results/figs
-
-# uv run auto_plotter.py bar ../results/math.csv -o ../results/figs/math_wfomc.png -a inc2 rec inc --sort-by inc2
-# uv run auto_plotter.py bar ../results/math.csv -o ../results/figs/math_wmc.png -a inc2 ganak d4 --sort-by inc2 --legend "upper left"
-# uv run auto_plotter.py bar ../results/math_x2.csv -o ../results/figs/math_wmc_x2.png -a inc2 ganak d4 --sort-by inc2
-
-
-# uv run auto_plotter.py scale ../results/ht.csv -o ../results/figs/ht_wmc.png -a inc ganak d4 --prefix ht --max 15 --legend "upper left"
-# uv run auto_plotter.py scale ../results/ht.csv -o ../results/figs/ht_wfomc.png -a inc --prefix ht --min 50 --xticks 100,1001,100 --legend "upper left"
-
-# uv run auto_plotter.py scale ../results/books.csv -o ../results/figs/books_wmc.png -a inc2 ganak d4 --prefix b --legend "upper left"
-# uv run auto_plotter.py scale ../results/books.csv -o ../results/figs/books_wfomc.png  -a inc2 rec inc --prefix b --legend "upper left"
-
-# uv run auto_plotter.py scale ../results/hmm.csv -o ../results/figs/hmm_wfomc.png -a inc2 rec inc --prefix kl --max 20 --legend "upper left"
-# uv run auto_plotter.py scale ../results/hmm.csv -o ../results/figs/hmm_wmc.png -a inc2 ganak d4 --prefix kl --max 20 --legend "upper left"
-# uv run auto_plotter.py scale ../results/hmm.csv -o ../results/figs/hmm_large.png -a inc2 --prefix kl --min 20 --legend "upper left" --xticks 20,90,10
-
-# uv run auto_plotter.py scale ../results/higher_hmm.csv -o ../results/figs/higher_hmm_wmc.png -a inc2 ganak d4 --prefix k --max 15 --legend "upper left"
-# uv run auto_plotter.py scale ../results/higher_hmm.csv -o ../results/figs/higher_hmm_wfomc.png -a inc2 --prefix k --min 15 --legend "upper left" --xticks 15,55,5
-
-
-# uv run auto_plotter.py scale ../results/ws.csv -o ../results/figs/ws_wmc_z1.png -a inc2 ganak d4 --prefix z --suffix 1 --max 10
-# uv run auto_plotter.py scale ../results/ws.csv -o ../results/figs/ws_wmc_z2.png -a inc2 ganak d4 --prefix z --suffix 2 --max 10
-# uv run auto_plotter.py scale ../results/ws.csv -o ../results/figs/ws_wmc_z3.png -a inc2 ganak d4 --prefix z --suffix 3 --max 10
-# uv run auto_plotter.py scale ../results/ws.csv -o ../results/figs/ws_wfomc_z1.png -a inc2 rec inc --prefix z --suffix 1 --max 20
-# uv run auto_plotter.py scale ../results/ws.csv -o ../results/figs/ws_wfomc_z2.png -a inc2 rec inc --prefix z --suffix 2 --max 20
-# uv run auto_plotter.py scale ../results/ws.csv -o ../results/figs/ws_wfomc_z3.png -a inc2 rec inc --prefix z --suffix 3 --max 20
