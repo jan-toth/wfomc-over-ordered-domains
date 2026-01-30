@@ -49,24 +49,24 @@ loop_with_timeout_without_break() {
 # SIMPLE EXAMPLES
 
 # Head & Tail
-loop_with_timeout "uv run auto_counter.py -inc -o ht.csv" $(ls -v ../models/seq/head_tail/wfomcs/*.wfomcs)
-loop_with_timeout "uv run auto_counter.py -ganak -o ht.csv" $(ls -v ../models/seq/head_tail/cnf/*.cnf)
-loop_with_timeout "uv run auto_counter.py -d4 -o ht.csv" $(ls -v ../models/seq/head_tail/cnf/*.cnf)
+# loop_with_timeout "uv run auto_counter.py -inc -o ht.csv" $(ls -v ../models/seq/head_tail/wfomcs/*.wfomcs)
+# loop_with_timeout "uv run auto_counter.py -ganak -o ht.csv" $(ls -v ../models/seq/head_tail/cnf/*.cnf)
+# loop_with_timeout "uv run auto_counter.py -d4 -o ht.csv" $(ls -v ../models/seq/head_tail/cnf/*.cnf)
 
-# English & Math Books
-loop_with_timeout "uv run auto_counter.py -inc -l inc2 -o books.csv" $(ls -v ../models/seq/eng_math/new_encode/*.wfomcs)
-loop_with_timeout "uv run auto_counter.py -inc -o books.csv" $(ls -v ../models/seq/eng_math/old_encode/*.wfomcs)
-loop_with_timeout "uv run auto_counter.py -rec  -o books.csv" $(ls -v ../models/seq/eng_math/old_encode/*.wfomcs)
-loop_with_timeout "uv run auto_counter.py -ganak -o books.csv" $(ls -v ../models/seq/eng_math/cnf/*.cnf)
-loop_with_timeout "uv run auto_counter.py -d4 -o books.csv" $(ls -v ../models/seq/eng_math/cnf/*.cnf)
-
-
+# # English & Math Books
+# loop_with_timeout "uv run auto_counter.py -inc -l inc2 -o books.csv" $(ls -v ../models/seq/eng_math/new_encode/*.wfomcs)
+# loop_with_timeout "uv run auto_counter.py -inc -o books.csv" $(ls -v ../models/seq/eng_math/old_encode/*.wfomcs)
+# loop_with_timeout "uv run auto_counter.py -rec  -o books.csv" $(ls -v ../models/seq/eng_math/old_encode/*.wfomcs)
+# loop_with_timeout "uv run auto_counter.py -ganak -o books.csv" $(ls -v ../models/seq/eng_math/cnf/*.cnf)
+# loop_with_timeout "uv run auto_counter.py -d4 -o books.csv" $(ls -v ../models/seq/eng_math/cnf/*.cnf)
 
 
-## ================
-# COMBINATORICS
 
-# Original MATH problems
+
+# ## ================
+# # COMBINATORICS
+
+# # Original MATH problems
 loop_with_timeout_without_break "uv run auto_counter.py -inc -l inc2 -o math.csv" $(ls -v ../models/comb/original/new_encode/*.wfomcs)
 loop_with_timeout_without_break "uv run auto_counter.py -inc -o math.csv" $(ls -v ../models/comb/original/old_encode/*.wfomcs)
 loop_with_timeout_without_break "uv run auto_counter.py -rec -o math.csv" $(ls -v ../models/comb/original/old_encode/*.wfomcs)
@@ -78,6 +78,10 @@ loop_with_timeout_without_break "uv run auto_counter.py -inc -l inc2 -o math_x2.
 loop_with_timeout_without_break "uv run auto_counter.py -ganak -o math_x2.csv" $(ls -v ../models/comb/times_2/cnf/*.cnf)
 loop_with_timeout_without_break "uv run auto_counter.py -d4 -o math_x2.csv" $(ls -v ../models/comb/times_2/cnf/*.cnf)
 
+# Thrice the domain
+loop_with_timeout_without_break "uv run auto_counter.py -inc -l inc2 -o math_x3.csv" $(ls -v ../models/comb/times_3/new_encode/*.wfomcs)
+loop_with_timeout_without_break "uv run auto_counter.py -ganak -o math_x3.csv" $(ls -v ../models/comb/times_3/cnf/*.cnf)
+loop_with_timeout_without_break "uv run auto_counter.py -d4 -o math_x3.csv" $(ls -v ../models/comb/times_3/cnf/*.cnf)
 
 
 
