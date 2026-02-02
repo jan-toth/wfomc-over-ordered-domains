@@ -644,77 +644,344 @@ def _incremental_wfomc_with_predecessor_and_successor(context: WFOMCContext):
                         if j == c:
                             continue
                         for d, cell_d in enumerate(cells):
-                            if rho[c * n_cells + d] <= (0 if i != c or j != d else 1):
+                            if i == j and rho_single[i] + rho[i * n_cells + j] <= 0:
+                                continue
+                            elif c == d and rho_single[c] + rho[c * n_cells + d] <= 0:
+                                continue
+                            elif rho[i * n_cells + j] <= 0:
+                                continue
+                            elif rho[c * n_cells + d] <= 0:
                                 continue
                             #merge1
-                            eta = Rational(rho[i * n_cells + j] * rho[c * n_cells + d], 1) \
-                                if i != c or j != d else \
-                                Rational(rho[i * n_cells + j] * (rho[i * n_cells + j] - 1), 1)
-                            W_cell = cell_graph.get_cell_weight(cell)
-                            if cell_j == pred:
-                                lambda_eta = (rho[c * n_cells + d] if i != c or j != d else rho[c * n_cells + d] - 1) * \
-                                cell_graph.get_two_table_with_pred_weight((cell, cell_j), index = 1, evidences=evidence["SUC type 3"]) * \
-                                cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 2"]) * \
-                                (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 1)) * \
-                                (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 1)) * \
-                                math.prod(1 if (e == j or e == c) else \
-                                (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
-                                for e, cell_s in enumerate(cells))
-                                if sigma[j] >= 2:
-                                    lambda_eta = lambda_eta + \
-                                    (Rational((rho[i * n_cells + j] - 1) * rho[c * n_cells + d], 1) \
-                                    if i != c or j != d else \
-                                    Rational((rho[i * n_cells + j] - 1) * (rho[i * n_cells + j] - 1), 1)) * \
-                                    cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 3"]) * \
-                                    cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 2"]) * \
-                                    (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 2)) * \
-                                    (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 1)) * \
-                                    cell_graph.get_two_table_with_pred_weight((cell, cell_j), index = 1,  evidences=evidence["SUC type 1"])* \
-                                    math.prod(1 if (e == j or e == c) else \
-                                    (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
-                                    for e, cell_s in enumerate(cells))
-                            elif cell_c == pred:
-                                lambda_eta = (rho[i * n_cells + j] if i != c or j != d else rho[i * n_cells + j] - 1) * \
-                                cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 3"]) * \
-                                cell_graph.get_two_table_with_pred_weight((cell, cell_c), index = 1, evidences=evidence["SUC type 2"]) * \
-                                (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 1)) * \
-                                (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 1)) * \
-                                math.prod(1 if (e == j or e == c) else \
-                                (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e]) \
-                                for e, cell_s in enumerate(cells))
-                                if sigma[c] >= 2:
-                                    lambda_eta = lambda_eta + \
-                                    (Rational((rho[i * n_cells + j]) * (rho[c * n_cells + d] - 1), 1) \
-                                    if i != c or j != d else \
-                                    Rational((rho[i * n_cells + j]) * (rho[i * n_cells + j] - 2), 1)) * \
-                                    cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 3"]) * \
-                                    cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 2"]) * \
-                                    (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 1)) * \
-                                    (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 2)) * \
-                                    (cell_graph.get_two_table_with_pred_weight((cell, cell_c), index = 1, evidences=evidence["SUC type 1"])) * \
-                                    math.prod(1 if (e == j or e == c) else \
-                                    (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e]) \
-                                    for e, cell_s in enumerate(cells))
-                            else:
-                                lambda_eta = eta * \
-                                    cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 3"]) * \
-                                    cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 2"]) * \
-                                    (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 1)) * \
-                                    (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 1)) * \
-                                    cell_graph.get_two_table_weight((cell, pred), evidences=evidence["SUC type 1"]) ** (sigma[cells.index(pred)] - 1) * \
-                                    cell_graph.get_two_table_with_pred_weight((cell, pred), index = 1, evidences=evidence["SUC type 1"]) * \
-                                    math.prod(1 if (e == j or e == c or cell_s == pred) else \
-                                    (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
-                                    for e, cell_s in enumerate(cells))
-                            new_rho = list(rho)
-                            new_rho[i * n_cells + j] -= 1
-                            new_rho[c * n_cells + d] -= 1
-                            new_rho[i * n_cells + d] += 1
-                            new_sigma = list(sigma)
-                            new_sigma[m] += 1
-                            new_key = (tuple(new_sigma), tuple(new_rho), cell)
-                            if h_old * W_cell * lambda_eta != 0:
-                                out.append((new_key, h_old * W_cell * lambda_eta))
+
+                            if i == j and rho_single[i] > 0 and c == d and rho_single[c] > 0:
+                                if pred_type == pred_pos.SINGLE and pred_segment == j:
+                                    lambda_eta = rho_single[c] * \
+                                        cell_graph.get_two_table_with_pred_weight((cell, cell_j), index = 1, evidences=evidence["SUC type 3"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 2"]) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 1)) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 1)) * \
+                                        math.prod(1 if (e == j or e == c) else \
+                                        (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
+                                        for e, cell_s in enumerate(cells)) \
+                                        + \
+                                        (rho_single[j] - 1) * rho_single[c] * \
+                                        cell_graph.get_two_table_with_pred_weight((cell, cell_j), index = 1, evidences=evidence["SUC type 1"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 3"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 2"]) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 2)) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 1)) * \
+                                        math.prod(1 if (e == j or e == c) else \
+                                        (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
+                                        for e, cell_s in enumerate(cells))
+                                elif pred_type == pred_pos.SINGLE and pred_segment == c:
+                                    lambda_eta = rho_single[j] * \
+                                        cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 3"]) * \
+                                        cell_graph.get_two_table_with_pred_weight((cell, cell_c), index = 1, evidences=evidence["SUC type 2"]) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 1)) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 1)) * \
+                                        math.prod(1 if (e == j or e == c) else \
+                                        (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
+                                        for e, cell_s in enumerate(cells)) \
+                                        + \
+                                        (rho_single[j]) * (rho_single[c] - 1) * \
+                                        cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 3"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 2"]) * \
+                                        cell_graph.get_two_table_with_pred_weight((cell, cell_c), index = 1, evidences=evidence["SUC type 1"]) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 1)) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 2)) * \
+                                        math.prod(1 if (e == j or e == c) else \
+                                        (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
+                                        for e, cell_s in enumerate(cells))
+                                elif pred_segment == j:
+                                    lambda_eta = (rho_single[j]) * rho_single[c] * \
+                                        cell_graph.get_two_table_with_pred_weight((cell, cell_j), index = 1, evidences=evidence["SUC type 1"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 3"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 2"]) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 2)) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 1)) * \
+                                        math.prod(1 if (e == j or e == c) else \
+                                        (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
+                                        for e, cell_s in enumerate(cells))
+                                elif pred_segment == c:
+                                    lambda_eta = (rho_single[j]) * (rho_single[c]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 3"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 2"]) * \
+                                        cell_graph.get_two_table_with_pred_weight((cell, cell_c), index = 1, evidences=evidence["SUC type 1"]) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 1)) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 2)) * \
+                                        math.prod(1 if (e == j or e == c) else \
+                                        (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
+                                        for e, cell_s in enumerate(cells))
+                                else:
+                                    lambda_eta = (rho_single[j]) * (rho_single[c]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 3"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 2"]) * \
+                                        cell_graph.get_two_table_with_pred_weight((cell, pred_cell), index = 1, evidences=evidence["SUC type 1"]) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 1)) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 1)) * \
+                                        (cell_graph.get_two_table_weight((cell, pred_cell), evidences=evidence["SUC type 1"]) ** (sigma[cells.index(pred_cell)] - 1)) * \
+                                        math.prod(1 if (e == j or e == c or pred_cell == cell_s) else \
+                                        (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
+                                        for e, cell_s in enumerate(cells))
+                                
+                                new_rho = list(rho)
+                                new_rho[i * n_cells + d] += 1
+                                new_rho_single = list(rho_single)
+                                new_rho_single[j] -= 1
+                                new_rho_single[c] -= 1
+                                new_sigma = list(sigma)
+                                new_sigma[m] += 1
+                                new_pred = (pred_pos.MIDDLE, (i, d), cell)
+                                new_key = (tuple(new_sigma), tuple(new_rho_single), tuple(new_rho), new_pred)
+                                if h_old * W_cell * lambda_eta != 0:
+                                    out.append((new_key, h_old * W_cell * lambda_eta))
+
+                            elif i == j and rho_single[j] > 0 and rho[c * n_cells + d] > 0:
+                                if pred_type == pred_pos.SINGLE and pred_segment == j:
+                                    lambda_eta = rho[c * n_cells + d] * \
+                                        cell_graph.get_two_table_with_pred_weight((cell, cell_j), index = 1, evidences=evidence["SUC type 3"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 2"]) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 1)) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 1)) * \
+                                        math.prod(1 if (e == j or e == c) else \
+                                        (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
+                                        for e, cell_s in enumerate(cells)) \
+                                        + \
+                                        (rho_single[j] - 1) * rho[c * n_cells + d] * \
+                                        cell_graph.get_two_table_with_pred_weight((cell, cell_j), index = 1, evidences=evidence["SUC type 1"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 3"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 2"]) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 2)) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 1)) * \
+                                        math.prod(1 if (e == j or e == c) else \
+                                        (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
+                                        for e, cell_s in enumerate(cells))
+                                elif pred_type == pred_pos.LEFT and pred_segment == (c, d):
+                                    lambda_eta = rho_single[j] * \
+                                        cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 3"]) * \
+                                        cell_graph.get_two_table_with_pred_weight((cell, cell_c), index = 1, evidences=evidence["SUC type 2"]) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 1)) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 1)) * \
+                                        math.prod(1 if (e == j or e == c) else \
+                                        (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
+                                        for e, cell_s in enumerate(cells)) \
+                                        + \
+                                        (rho_single[j]) * (rho[c * n_cells + d] - 1) * \
+                                        cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 3"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 2"]) * \
+                                        cell_graph.get_two_table_with_pred_weight((cell, cell_c), index = 1, evidences=evidence["SUC type 1"]) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 1)) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 2)) * \
+                                        math.prod(1 if (e == j or e == c) else \
+                                        (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
+                                        for e, cell_s in enumerate(cells))
+                                elif pred_segment == j:
+                                    lambda_eta = (rho_single[j]) * rho[c * n_cells + d] * \
+                                        cell_graph.get_two_table_with_pred_weight((cell, cell_j), index = 1, evidences=evidence["SUC type 1"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 3"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 2"]) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 2)) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 1)) * \
+                                        math.prod(1 if (e == j or e == c) else \
+                                        (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
+                                        for e, cell_s in enumerate(cells))
+                                elif pred_segment == c:
+                                    lambda_eta = (rho_single[j]) * (rho[c * n_cells + d]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 3"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 2"]) * \
+                                        cell_graph.get_two_table_with_pred_weight((cell, cell_c), index = 1, evidences=evidence["SUC type 1"]) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 1)) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 2)) * \
+                                        math.prod(1 if (e == j or e == c) else \
+                                        (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
+                                        for e, cell_s in enumerate(cells))
+                                else:
+                                    lambda_eta = (rho_single[j]) * (rho[c * n_cells + d]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 3"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 2"]) * \
+                                        cell_graph.get_two_table_with_pred_weight((cell, pred_cell), index = 1, evidences=evidence["SUC type 1"]) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 1)) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 1)) * \
+                                        (cell_graph.get_two_table_weight((cell, pred_cell), evidences=evidence["SUC type 1"]) ** (sigma[cells.index(pred_cell)] - 1)) * \
+                                        math.prod(1 if (e == j or e == c or pred_cell == cell_s) else \
+                                        (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
+                                        for e, cell_s in enumerate(cells))
+                                new_rho = list(rho)
+                                new_rho[c * n_cells + d] -= 1
+                                new_rho[i * n_cells + d] += 1
+                                new_rho_single = list(rho_single)
+                                new_rho_single[j] += 1
+                                new_sigma = list(sigma)
+                                new_sigma[m] += 1
+                                new_pred = (pred_pos.MIDDLE, (i, d), cell)
+                                new_key = (tuple(new_sigma), tuple(new_rho_single), tuple(new_rho), new_pred)
+                                if h_old * W_cell * lambda_eta != 0:
+                                    out.append((new_key, h_old * W_cell * lambda_eta))
+
+                            elif c == d and rho_single[d] > 0 and rho[i * n_cells + j] > 0:
+                                if pred_type == pred_pos.RIGHT and pred_segment == (i, j):
+                                    lambda_eta = rho_single[d] * \
+                                        cell_graph.get_two_table_with_pred_weight((cell, cell_j), index = 1, evidences=evidence["SUC type 3"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 2"]) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 1)) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 1)) * \
+                                        math.prod(1 if (e == j or e == c) else \
+                                        (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
+                                        for e, cell_s in enumerate(cells)) \
+                                        + \
+                                        (rho_single[d]) * (rho[i * n_cells + j] - 1) * \
+                                        cell_graph.get_two_table_with_pred_weight((cell, cell_j), index = 1, evidences=evidence["SUC type 1"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 3"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 2"]) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 2)) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 1)) * \
+                                        math.prod(1 if (e == j or e == c) else \
+                                        (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
+                                        for e, cell_s in enumerate(cells))
+                                elif pred_type == pred_pos.SINGLE and pred_segment == c:
+                                    lambda_eta = rho[i * n_cells  + j] * \
+                                        cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 3"]) * \
+                                        cell_graph.get_two_table_with_pred_weight((cell, cell_c), index = 1, evidences=evidence["SUC type 2"]) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 1)) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 1)) * \
+                                        math.prod(1 if (e == j or e == c) else \
+                                        (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
+                                        for e, cell_s in enumerate(cells)) \
+                                        + \
+                                        (rho[i * n_cells + j]) * (rho_single[c] - 1) * \
+                                        cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 3"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 2"]) * \
+                                        cell_graph.get_two_table_with_pred_weight((cell, cell_c), index = 1, evidences=evidence["SUC type 1"]) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 1)) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 2)) * \
+                                        math.prod(1 if (e == j or e == c) else \
+                                        (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
+                                        for e, cell_s in enumerate(cells))
+                                elif pred_segment == j:
+                                    lambda_eta = (rho[i * n_cells + j]) * rho_single[c] * \
+                                        cell_graph.get_two_table_with_pred_weight((cell, cell_j), index = 1, evidences=evidence["SUC type 1"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 3"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 2"]) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 2)) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 1)) * \
+                                        math.prod(1 if (e == j or e == c) else \
+                                        (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
+                                        for e, cell_s in enumerate(cells))
+                                elif pred_segment == c:
+                                    lambda_eta = (rho[i * n_cells + j]) * (rho_single[c]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 3"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 2"]) * \
+                                        cell_graph.get_two_table_with_pred_weight((cell, cell_c), index = 1, evidences=evidence["SUC type 1"]) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 1)) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 2)) * \
+                                        math.prod(1 if (e == j or e == c) else \
+                                        (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
+                                        for e, cell_s in enumerate(cells))
+                                else:
+                                    lambda_eta = (rho[i * n_cells + j]) * (rho_single[c]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 3"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 2"]) * \
+                                        cell_graph.get_two_table_with_pred_weight((cell, pred_cell), index = 1, evidences=evidence["SUC type 1"]) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 1)) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 1)) * \
+                                        (cell_graph.get_two_table_weight((cell, pred_cell), evidences=evidence["SUC type 1"]) ** (sigma[cells.index(pred_cell)] - 1)) * \
+                                        math.prod(1 if (e == j or e == c or pred_cell == cell_s) else \
+                                        (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
+                                        for e, cell_s in enumerate(cells))
+                                
+                                new_rho = list(rho)
+                                new_rho[i * n_cells + j] -= 1
+                                new_rho[i * n_cells + d] += 1
+                                new_rho_single = list(rho_single)
+                                new_rho_single[c] += 1
+                                new_sigma = list(sigma)
+                                new_sigma[m] += 1
+                                new_pred = (pred_pos.MIDDLE, (i, d), cell)
+                                new_key = (tuple(new_sigma), tuple(new_rho_single), tuple(new_rho), new_pred)
+                                if h_old * W_cell * lambda_eta != 0:
+                                    out.append((new_key, h_old * W_cell * lambda_eta))
+
+                            elif rho[i * n_cells + j] > 0 and rho[c * n_cells + d] > 0:
+                                if pred_type == pred_pos.RIGHT and pred_segment == (i, j):
+                                    lambda_eta = (rho[c * n_cells + d] - (0 if i != c or j != d else 1)) * \
+                                        cell_graph.get_two_table_with_pred_weight((cell, cell_j), index = 1, evidences=evidence["SUC type 3"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 2"]) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 1)) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 1)) * \
+                                        math.prod(1 if (e == j or e == c) else \
+                                        (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
+                                        for e, cell_s in enumerate(cells)) \
+                                        + \
+                                        (rho[i * n_cells + j] - 1) * (rho[c * n_cells + d] - (0 if i != c or j != d else 1)) * \
+                                        cell_graph.get_two_table_with_pred_weight((cell, cell_j), index = 1, evidences=evidence["SUC type 1"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 3"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 2"]) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 2)) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 1)) * \
+                                        math.prod(1 if (e == j or e == c) else \
+                                        (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
+                                        for e, cell_s in enumerate(cells))
+                                elif pred_type == pred_pos.LEFT and pred_segment == (c, d):
+                                    lambda_eta = (rho[i * n_cells  + j] - (0 if i != c or j != d else 1)) * \
+                                        cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 3"]) * \
+                                        cell_graph.get_two_table_with_pred_weight((cell, cell_c), index = 1, evidences=evidence["SUC type 2"]) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 1)) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 1)) * \
+                                        math.prod(1 if (e == j or e == c) else \
+                                        (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
+                                        for e, cell_s in enumerate(cells)) \
+                                        + \
+                                        (rho[i * n_cells + j] - (0 if i != c or j != d else 1)) * (rho[c * n_cells + d] - 1) * \
+                                        cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 3"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 2"]) * \
+                                        cell_graph.get_two_table_with_pred_weight((cell, cell_c), index = 1, evidences=evidence["SUC type 1"]) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 1)) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 2)) * \
+                                        math.prod(1 if (e == j or e == c) else \
+                                        (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
+                                        for e, cell_s in enumerate(cells))
+                                elif pred_segment == j:
+                                    lambda_eta = (rho[i * n_cells + j] - (0 if i != c or j != d else 1)) * rho[c * n_cells + d] * \
+                                        cell_graph.get_two_table_with_pred_weight((cell, cell_j), index = 1, evidences=evidence["SUC type 1"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 3"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 2"]) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 2)) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 1)) * \
+                                        math.prod(1 if (e == j or e == c) else \
+                                        (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
+                                        for e, cell_s in enumerate(cells))
+                                elif pred_segment == c:
+                                    lambda_eta = (rho[i * n_cells + j] - (0 if i != c or j != d else 1)) * (rho[c * n_cells + d]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 3"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 2"]) * \
+                                        cell_graph.get_two_table_with_pred_weight((cell, cell_c), index = 1, evidences=evidence["SUC type 1"]) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 1)) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 2)) * \
+                                        math.prod(1 if (e == j or e == c) else \
+                                        (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
+                                        for e, cell_s in enumerate(cells))
+                                else:
+                                    lambda_eta = (rho[i * n_cells + j] - (0 if i != c or j != d else 1)) * (rho[c * n_cells + d]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 3"]) * \
+                                        cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 2"]) * \
+                                        cell_graph.get_two_table_with_pred_weight((cell, pred_cell), index = 1, evidences=evidence["SUC type 1"]) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_j), evidences=evidence["SUC type 1"]) ** (sigma[j] - 1)) * \
+                                        (cell_graph.get_two_table_weight((cell, cell_c), evidences=evidence["SUC type 1"]) ** (sigma[c] - 1)) * \
+                                        (cell_graph.get_two_table_weight((cell, pred_cell), evidences=evidence["SUC type 1"]) ** (sigma[cells.index(pred_cell)] - 1)) * \
+                                        math.prod(1 if (e == j or e == c or pred_cell == cell_s) else \
+                                        (cell_graph.get_two_table_weight((cell, cell_s), evidences=evidence["SUC type 1"]) ** sigma[e])\
+                                        for e, cell_s in enumerate(cells))
+                                new_rho = list(rho)
+                                new_rho[i * n_cells + j] -= 1
+                                new_rho[c * n_cells + d] -= 1
+                                new_rho[i * n_cells + d] += 1
+                                new_sigma = list(sigma)
+                                new_sigma[m] += 1
+                                new_pred = (pred_pos.MIDDLE, (i, d), cell)
+                                new_key = (tuple(new_sigma), rho_single, tuple(new_rho), new_pred)
+                                if h_old * W_cell * lambda_eta != 0:
+                                    out.append((new_key, h_old * W_cell * lambda_eta))
             return out
 
         table = dict(
