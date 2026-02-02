@@ -112,6 +112,12 @@ loop_with_timeout "uv run auto_counter.py -rec -o ws.csv" $(ls -v ../models/ws/o
 loop_with_timeout "uv run auto_counter.py -ganak -o ws.csv" $(ls -v ../models/ws/cnf/*.cnf)
 loop_with_timeout "uv run auto_counter.py -d4 -o ws.csv" $(ls -v ../models/ws/cnf/*.cnf)
 
+loop_with_timeout "uv run auto_counter.py -inc -l inc2 -o ws2.csv" $(ls -v ../models/ws2/new_encode/*.wfomcs)
+loop_with_timeout "uv run auto_counter.py -inc -o ws2.csv" $(ls -v ../models/ws2/old_encode/*.wfomcs)
+loop_with_timeout "uv run auto_counter.py -rec -o ws2.csv" $(ls -v ../models/ws2/old_encode/*.wfomcs)
+loop_with_timeout "uv run auto_counter.py -ganak -o ws2.csv" $(ls -v ../models/ws2/cnf/*.cnf)
+loop_with_timeout "uv run auto_counter.py -d4 -o ws2.csv" $(ls -v ../models/ws2/cnf/*.cnf)
+
 # =============================
 #        INCREMENTAL (LO) + SUCCESSOR
 # =============================
@@ -149,9 +155,9 @@ uv run auto_plotter.py scale ../results/higher_hmm.csv -o ../results/figs/higher
 uv run auto_plotter.py scale ../results/higher_hmm.csv -o ../results/figs/higher_hmm_large.png -a inc2 --prefix k --min 15 --legend "upper left" --xticks 15,55,5
 
 
-uv run auto_plotter.py scale ../results/ws.csv -o ../results/figs/ws_z1.png -a inc2 ganak d4 rec inc --prefix z --suffix 1 --max 20
-uv run auto_plotter.py scale ../results/ws.csv -o ../results/figs/ws_z2.png -a inc2 ganak d4 rec inc --prefix z --suffix 2 --max 20
-uv run auto_plotter.py scale ../results/ws.csv -o ../results/figs/ws_z3.png -a inc2 ganak d4 rec inc --prefix z --suffix 3 --max 20
+uv run auto_plotter.py scale ../results/ws.csv -o ../results/figs/ws_z1.png -a inc2 ganak d4 rec inc --prefix z --suffix 1 --max 20 --legend "upper left
+uv run auto_plotter.py scale ../results/ws.csv -o ../results/figs/ws_z2.png -a inc2 ganak d4 rec inc --prefix z --suffix 2 --max 20 --legend "upper left
+uv run auto_plotter.py scale ../results/ws.csv -o ../results/figs/ws_z3.png -a inc2 ganak d4 rec inc --prefix z --suffix 3 --max 20 --legend "upper left
 uv run auto_plotter.py scale ../results/ws.csv -o ../results/figs/ws_large_z1.png -a inc2  --prefix z --suffix 1 --min 20 --legend "upper left" --xticks 100,501,100
 uv run auto_plotter.py scale ../results/ws.csv -o ../results/figs/ws_large_z2.png -a inc2 --prefix z --suffix 2 --min 20 --legend "upper left" --xticks 100,501,100
 uv run auto_plotter.py scale ../results/ws.csv -o ../results/figs/ws_large_z3.png -a inc2 --prefix z --suffix 3 --min 20 --legend "upper left" --xticks 100,501,100

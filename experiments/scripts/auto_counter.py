@@ -53,7 +53,7 @@ def parse_args():
 def run_wfomc(infile, algo=Algo.INCREMENTAL):
     problem = parse_input(infile)
 
-    if problem.cardinality_constraint and algo == Algo.INCREMENTAL:
+    if problem.unary_evidence and algo == Algo.INCREMENTAL:
         uee = UnaryEvidenceEncoding.PC
     else:
         uee = UnaryEvidenceEncoding.CCS
