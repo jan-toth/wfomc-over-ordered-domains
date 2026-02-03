@@ -112,9 +112,9 @@ loop_with_timeout "uv run auto_counter.py -rec -o ws.csv" $(ls -v ../models/ws/o
 loop_with_timeout "uv run auto_counter.py -ganak -o ws.csv" $(ls -v ../models/ws/cnf/*.cnf)
 loop_with_timeout "uv run auto_counter.py -d4 -o ws.csv" $(ls -v ../models/ws/cnf/*.cnf)
 
-loop_with_timeout "uv run auto_counter.py -inc -l inc2 -o ws2.csv" $(ls -v ../models/ws2/new_encode/*.wfomcs)
-loop_with_timeout "uv run auto_counter.py -inc -o ws2.csv" $(ls -v ../models/ws2/old_encode/*.wfomcs)
-loop_with_timeout "uv run auto_counter.py -rec -o ws2.csv" $(ls -v ../models/ws2/old_encode/*.wfomcs)
+loop_with_timeout "uv run auto_counter.py -inc -l inc2 -o ws2.csv" $(ls -v ../models/ws2/new_encode/*.mln)
+loop_with_timeout "uv run auto_counter.py -inc -o ws2.csv" $(ls -v ../models/ws2/old_encode/*.mln)
+loop_with_timeout "uv run auto_counter.py -rec -o ws2.csv" $(ls -v ../models/ws2/old_encode/*.mln)
 loop_with_timeout "uv run auto_counter.py -ganak -o ws2.csv" $(ls -v ../models/ws2/cnf/*.cnf)
 loop_with_timeout "uv run auto_counter.py -d4 -o ws2.csv" $(ls -v ../models/ws2/cnf/*.cnf)
 

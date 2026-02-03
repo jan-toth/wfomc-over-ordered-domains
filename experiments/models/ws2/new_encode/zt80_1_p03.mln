@@ -1,9 +1,0 @@
-\forall X: (~Wired(X,X)).
-\forall X: (\forall Y: (~Wired(X,Y) | ~Wired(Y,X))).
-\forall X: (\exists Y: (Wired(X,Y))).
-\forall X: (\forall Y: (Edge(X,Y) <-> (Wired(X,Y) | Wired(Y,X)))).
--0.42 Wired(X,Y) & ~CIRCULAR_PRED(X,Y)
-0.42 Wired(X,Y) & CIRCULAR_PRED(X,Y)
-
-domain = 80
-|Wired| = 320
