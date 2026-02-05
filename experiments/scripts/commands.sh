@@ -140,6 +140,7 @@ uv run auto_plotter.py bar ../results/math.csv -o ../results/figs/math.png -a in
 
 uv run auto_plotter.py cactus ../results/math.csv -o ../results/figs/math_cactus.png -a inc2 ganak d4 rec inc
 uv run auto_plotter.py cactus ../results/math_x2.csv -o ../results/figs/math_cactus_x2.png -a inc2 ganak d4 --legend "upper left"
+uv run auto_plotter.py cactus ../results/math_x3.csv -o ../results/figs/math_cactus_x3.png -a inc2 ganak d4 --legend "lower right"
 
 
 uv run auto_plotter.py scale ../results/ht.csv -o ../results/figs/ht.png -a inc ganak d4 --prefix ht --max 15 --legend "upper left"
