@@ -40,6 +40,7 @@ def parse_args():
     parser.add_argument("--ganak", "-ganak", action="store_true", help="Problems will be computed with ganak")
     parser.add_argument("--incremental", "-inc", action="store_true", help="Problems will be copmuted with incremental wfomc")
     parser.add_argument("--recursive", "-rec", action="store_true", help="Problems will be copmuted with recursive wfomc")
+    parser.add_argument("--incremental_v3", "-lops", action="store_true", help="Problems will be computed using Qipeng's algorithm")
 
     parser.add_argument("-cnf", "--generate_cnf", action='store_true', help="Convert .wfomcs files to .cnf for [-d4, -ganak]")
 
@@ -125,6 +126,13 @@ def process_wfomc_problem(args, out_path, file, fn, inc_label):
         with open(out_path, "a") as fw:
             fw.write(f'{fn},rec,{time},"{val}"\n')
 
+    if args.incremental_v3:
+        debug_shout("Qipeng's", file)
+        val, time = run_wfomc(file, Algo.INCREMENTALwithSUCCESSOR)
+        with open(out_path, "a") as fw:
+            fw.write(f'{fn},inc3,{time},"{val}"\n')
+
+
 
 def process_wmc_problem(args, out_path, file, fn):
     if args.d4:
@@ -162,8 +170,9 @@ if __name__ == "__main__":
         print("Both --walk and --input specified. Considering ONLY --walk.")
 
     if args.d4 is False and args.ganak is False and args.incremental is False and args.recursive is False and args.generate_cnf is False:
-        print("Please select at least one solver from [-d4, -ganak, -inc, -rec]")
-        exit(1)
+        if args.incremental_v3 is False:
+            print("Please select at least one solver from [-d4, -ganak, -inc, -rec]")
+            exit(1)
 
 
     if args.walk is not None:   # "--walk" switch takes precedence

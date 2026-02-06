@@ -462,6 +462,84 @@ def append_order_axioms(leq_pred: Pred, succ_pred: Pred, circ_pred: Pred, domain
                     cnf.add_clause([~c_atom, s_atom, f_atom])
 
 
+def append_another_successor(leq2: Pred, succ2: Pred, domain_list: List[Const], cnf: DimacsCNF):
+    n = len(domain_list)
+
+    # # Pre-generate atoms for easier access
+    leq = [[leq2(domain_list[i], domain_list[j]) for j in range(n)] for i in range(n)]
+
+    # ============
+    # LEQ: Linear Order Axioms
+    # ============
+    for i in range(n):
+        # Reflexivity: LEQ(x, x)
+        cnf.add_clause([leq[i][i]])
+
+        for j in range(n):
+            if i == j: continue
+
+            # Totality & Antisymmetry: Exactly one of LEQ(x, y) or LEQ(y, x) is true
+            # LEQ(x, y) V LEQ(y, x)
+            cnf.add_clause([leq[i][j], leq[j][i]])
+            # ~LEQ(x, y) V ~LEQ(y, x)
+            cnf.add_clause([~leq[i][j], ~leq[j][i]])
+
+            # Transitivity: LEQ(x, y) & LEQ(y, z) -> LEQ(x, z)
+            for k in range(n):
+                if k == i or k == j: continue
+                cnf.add_clause([~leq[i][j], ~leq[j][k], leq[i][k]])
+
+    # ============
+    # SUCC (PRED1): Immediate Predecessor Axioms
+    # ============
+    succ = [[succ2(domain_list[i], domain_list[j]) for j in range(n)] for i in range(n)]
+
+    # Aux predicate: IsBetween(x, y, z) <-> LEQ(x, z) & LEQ(z, y)
+    # We only need this for distinct x, y, z
+    between_pred = new_predicate(3, "Aux_Another_Between")
+
+    for i in range(n):     # x
+        for j in range(n): # y
+
+            # 1. Non-reflexive: ~SUCC(x, x)
+            if i == j:
+                cnf.add_clause([~succ[i][j]])
+                continue
+
+            # 2. Consistency: SUCC(x, y) -> LEQ(x, y)
+            cnf.add_clause([~succ[i][j], leq[i][j]])
+
+            # 3. Definition: SUCC(x, y) <-> (LEQ(x, y) & ~EXISTS z strictly between x and y)
+            # We implement: SUCC(x, y) <-> LEQ(x, y) & AND_z (~Between(x, y, z))
+
+            intermediate_clauses = [] # This will collect atoms representing "z is between x and y"
+
+            for k in range(n): # z
+                if k == i or k == j: continue
+
+                # Define: Aux_Between(x, y, z) <-> LEQ(x, z) & LEQ(z, y)
+                aux_between = between_pred(domain_list[i], domain_list[j], domain_list[k])
+
+                # Tseitin for AND
+                # Aux -> A
+                cnf.add_clause([~aux_between, leq[i][k]])
+                # Aux -> B
+                cnf.add_clause([~aux_between, leq[k][j]])
+                # A & B -> Aux
+                cnf.add_clause([~leq[i][k], ~leq[k][j], aux_between])
+
+                intermediate_clauses.append(aux_between)
+
+
+            # Direction A: SUCC(x, y) -> ~Aux_Between(x, y, z) for all z
+            for aux in intermediate_clauses:
+                cnf.add_clause([~succ[i][j], ~aux])
+
+            # Direction B: (LEQ(x, y) & AND_z ~Aux_Between) -> SUCC(x, y)
+            # Equivalent CNF: ~LEQ(x, y) V (OR_z Aux_Between) V SUCC(x, y)
+            cnf.add_clause([~leq[i][j], succ[i][j]] + intermediate_clauses)
+
+
 def _ground_wfomc(problem: WFOMCProblem, check_order_preds=True):
     # 0. Ensure deterministic order for grounding
     domain_list = sorted(list(problem.domain), key=str)
@@ -519,6 +597,13 @@ def _ground_wfomc(problem: WFOMCProblem, check_order_preds=True):
 
         if leq_pred:
             append_order_axioms(leq_pred, succ_pred, circ_pred, domain_list, cnf)
+
+        for p in preds:
+            if p.name == "SUC":
+                leq2 = Pred("leq2", 2)
+                succ2 = p
+                append_another_successor(leq2, succ2, domain_list, cnf)
+                break
 
     return cnf
 

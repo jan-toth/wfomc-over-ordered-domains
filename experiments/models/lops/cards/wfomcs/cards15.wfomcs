@@ -1,0 +1,4 @@
+\forall X: (\forall Y:(SUC(X, Y) -> ~PRED(Y, X))) &
+\forall X: (\forall Y: (SUC(X, Y) -> ~PRED(X, Y)))
+
+domain = 15

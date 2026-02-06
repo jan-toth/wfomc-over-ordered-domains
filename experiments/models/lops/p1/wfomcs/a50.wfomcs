@@ -1,0 +1,4 @@
+\forall X: (\forall Y: (~B(X, Y) | SUC(X, Y))) &
+\forall X: (\forall Y: (~SUC(X, Y) | ~LEQ(X, Y) | B(X, Y)))
+
+domain = 50
