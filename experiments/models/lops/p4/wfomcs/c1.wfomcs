@@ -1,4 +1,4 @@
-\forall X: (\forall Y: ((U1(X, Y) & LEQ(X, Y)) -> U1(Y))) &
+\forall X: (\forall Y: ((U1(X) & LEQ(X, Y)) -> U1(Y))) &
 \forall X: (\forall Y: ((U1(X) & SUC(X, Y)) -> U2(Y)))
 
 domain = 1

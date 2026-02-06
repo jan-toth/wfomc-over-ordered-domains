@@ -15,13 +15,13 @@ PHI_2 = lambda n: fr"""\forall X: (\forall Y: ((SUC(X, Y) & LEQ(X, Y)) -> (U(X) 
 domain = {n}
 """
 
-PHI_4 = lambda n: fr"""\forall X: (\forall Y: ((U1(X, Y) & LEQ(X, Y)) -> U1(Y))) &
+PHI_4 = lambda n: fr"""\forall X: (\forall Y: ((U1(X) & LEQ(X, Y)) -> U1(Y))) &
 \forall X: (\forall Y: ((U1(X) & SUC(X, Y)) -> U2(Y)))
 
 domain = {n}
 """
 
-PHI_5 = lambda n: fr"""\forall X: (\forall Y: ((U1(X, Y) & LEQ(X, Y)) -> U1(Y))) &
+PHI_5 = lambda n: fr"""\forall X: (\forall Y: ((U1(X) & LEQ(X, Y)) -> U1(Y))) &
 \forall X: (\forall Y: ((U1(X) & SUC(X, Y)) -> U2(Y))) &
 \forall X: (\forall Y: (B(X, Y) -> (U1(X) & U2(Y))))
 
@@ -78,19 +78,19 @@ if __name__ == "__main__":
 
     small = False
     if small:
-        for n in range(1, 21):
+        for n in range(1, 16):
             # gen.phi_cards(n)
             # gen.phi_p1(n)
-            gen.phi_p2(n)
-            # gen.phi_p4(n)
-            # gen.phi_p5(n)
+            # gen.phi_p2(n)
+            gen.phi_p4(n)
+            gen.phi_p5(n)
     else:
-        for n in range(20,31,5):
+        for n in range(20,101,5):
             # gen.phi_cards(n)
             # gen.phi_p1(n)
-            gen.phi_p2(n)
-            # gen.phi_p4(n)
-            # gen.phi_p5(n)
+            # gen.phi_p2(n)
+            gen.phi_p4(n)
+            gen.phi_p5(n)
 
 
 
