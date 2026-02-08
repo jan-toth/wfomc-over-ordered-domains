@@ -2,4 +2,4 @@
 \forall X: (\forall Y: ((U1(X) & SUC(X, Y)) -> U2(Y))) &
 \forall X: (\forall Y: (B(X, Y) -> (U1(X) & U2(Y))))
 
-domain = 75
+domain = 18
