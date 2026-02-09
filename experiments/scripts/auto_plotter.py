@@ -13,7 +13,8 @@ RENAME_MAP = {
     'rec': 'Recursive',
     'inc2': 'Incremental_v2',
     'd4': 'd4',
-    'ganak': 'ganak'
+    'ganak': 'ganak',
+    'inc3': 'Incremental_v3'
 }
 
 COLOR_MAP = {
@@ -21,7 +22,8 @@ COLOR_MAP = {
     'rec': "#ff7f00",   # orange
     'inc2': "#e41a1c",  # red
     'd4': "#4daf4a",    # green
-    'ganak': "#377eb8"  # blue
+    'ganak': "#377eb8",  # blue
+    'inc3': "#ff00d4",   # pink
 }
 FALLBACK_COLORS = ["#a65628", "#f781bf", "#999999", "#a6cee3", "#b2df8a"]
 

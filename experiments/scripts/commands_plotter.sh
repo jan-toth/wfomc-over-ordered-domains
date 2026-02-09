@@ -11,7 +11,7 @@
 uv sync
 
 # =============================
-#           FIGURES
+#           INCREMENTAL (LO)
 # =============================
 
 uv run auto_plotter.py bar ../results/math_x1.csv -o ../results/figs/math_wfomc.png -a inc2 rec inc --sort-by inc2
@@ -47,3 +47,18 @@ uv run auto_plotter.py scale ../results/ws.csv -o ../results/figs/ws_large_z3.pn
 uv run auto_plotter.py scale ../results/ws2.csv -o ../results/figs/ws2.png -a inc2 ganak d4 rec inc --prefix zt --legend "upper right" --max 20
 uv run auto_plotter.py scale ../results/ws2.csv -o ../results/figs/ws2_large.png -a inc2 --prefix zt --legend "upper left" --xticks 10,95,10 --min 15
 
+
+# =============================
+#           LO + SUCCESSOR
+# =============================
+uv run auto_plotter.py scale ../results/lops_cards.csv -o ../results/figs/lops_cards.png -a inc3 ganak d4 --prefix cards --max 20
+uv run auto_plotter.py scale ../results/lops_cards.csv -o ../results/figs/lops_cards_large.png -a inc3 --prefix cards --min 20 --legend "lower right"
+
+uv run auto_plotter.py scale ../results/lops_p1.csv -o ../results/figs/lops_p1.png -a inc3 ganak d4 --prefix a --max 20
+uv run auto_plotter.py scale ../results/lops_p1.csv -o ../results/figs/lops_p1_large.png -a inc3 --prefix a --min 20 --legend "lower right"
+
+uv run auto_plotter.py scale ../results/lops_p2.csv -o ../results/figs/lops_p2.png -a inc3 ganak d4 --prefix b --max 20
+uv run auto_plotter.py scale ../results/lops_p2.csv -o ../results/figs/lops_p2_large.png -a inc3 --prefix b --min 20 --legend "lower right"
+
+uv run auto_plotter.py scale ../results/lops_p4.csv -o ../results/figs/lops_p4.png -a inc3 ganak d4 --prefix c --legend "lower right"
+uv run auto_plotter.py scale ../results/lops_p5.csv -o ../results/figs/lops_p5.png -a inc3 ganak d4 --prefix d --legend "lower right"
