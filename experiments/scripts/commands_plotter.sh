@@ -28,8 +28,6 @@ uv run auto_plotter.py cactus ../results/math_x3.csv -o ../results/figs/math_cac
 uv run auto_plotter.py scale ../results/ht.csv -o ../results/figs/ht.png -a inc ganak d4 --prefix ht --max 15 --legend "upper left"
 uv run auto_plotter.py scale ../results/ht.csv -o ../results/figs/ht_large.png -a inc --prefix ht --min 50 --xticks 100,1001,100 --legend "upper left"
 
-uv run auto_plotter.py scale ../results/books.csv -o ../results/figs/books.png  -a inc2 ganak d4 rec inc --prefix b --legend "upper left"
-
 
 uv run auto_plotter.py scale ../results/hmm.csv -o ../results/figs/hmm.png -a inc2 ganak d4 rec inc --prefix kl --max 20 --legend "upper left"
 uv run auto_plotter.py scale ../results/hmm.csv -o ../results/figs/hmm_large.png -a inc2 --prefix kl --min 20 --legend "upper left" --xticks 20,90,10
