@@ -6,7 +6,7 @@ Everything related to the Experiments section is located in the `experiments` fo
 * Submodules bringing in the WMC solvers
 * `models` folder containing all problems
 * `results` folder containing raw results produced by a machine with Intel(R) Core(TM) i7-14700K CPU, 64GB of RAM and Ubuntu 24.04.3 LTS operating system.
-* `scripts` folder containing all commands to produce the results in `results` folder as well as commands to produce final figures and `grounding.py` scipt used to translate *.wfomcs* and *.mln* files to *.cnf*
+* `scripts` folder containing all commands to produce the aforementioned results as well as commands to produce final figures and `grounding.py` script used to translate *.wfomcs* and *.mln* files to *.cnf*
 
 <!-- 
 ## Disclaimer
