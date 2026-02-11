@@ -1,3 +1,19 @@
+# Weighted First-Order Model Counting over Ordered Domains
+This an online appendix containing both source codes and problem sets used in the Experiments section.
+The repository also contains aall raw results used to generate figures.
+
+Everything related to the Experiments section is located in the `experiments` folder.
+* Submodules bringing in the WMC solvers
+* `models` folder containing all problems
+* `results` folder containing raw results produced by a machine with Intel(R) Core(TM) i7-14700K CPU, 64GB of RAM and Ubuntu 24.04.3 LTS operating system.
+* `scripts` folder containing all commands to produce the results in `results` folder as well as commands to produce final figures and `grounding.py` scipt used to translate *.wfomcs* and *.mln* files to *.cnf*
+
+<!-- 
+## Disclaimer
+The commands do not check for memory usage.
+Some runs may consume all RAM available and inevitably crash.
+Therefore, just running `bash commands_counter.sh` will likely not be feasible and more care will have to be taken when trying to recreate the experiments. -->
+
 # Exact Lifted Counter for Two-Variable Logic and Extensions
 
 This tool is for counting the models (or combinatorical structures) from the two-variable fragment of first-order logic and extensions.
