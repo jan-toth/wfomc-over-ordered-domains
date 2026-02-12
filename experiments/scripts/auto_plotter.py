@@ -69,7 +69,7 @@ def _extract_size(x, prefix):
     return None
 
 
-def plot_bars(csv_path, algorithms=None, sort_by_algo=None, legend_loc=None, log_scale=True, output_file=None):
+def plot_bars(csv_path, algorithms=None, sort_by_algo=None, legend_loc=None, font_scale=1.0, log_scale=True, output_file=None):
     """
     Generates a grouped bar plot comparing runtimes across different problems.
     """
@@ -119,7 +119,7 @@ def plot_bars(csv_path, algorithms=None, sort_by_algo=None, legend_loc=None, log
 
     # Plotting
     plt.figure(figsize=(12, 6))
-    sns.set_theme(style="whitegrid")
+    sns.set_theme(style="whitegrid", font_scale=font_scale)
 
     ax = sns.barplot(
         data=df_agg, 
@@ -150,7 +150,7 @@ def plot_bars(csv_path, algorithms=None, sort_by_algo=None, legend_loc=None, log
         plt.show()
 
 
-def plot_scaling(csv_path, prefix, suffix=None, algorithms=None, min_size=None, max_size=None, xticks=None, legend_loc=None, log_scale=True, output_file=None):
+def plot_scaling(csv_path, prefix, suffix=None, algorithms=None, min_size=None, max_size=None, xticks=None, legend_loc=None, font_scale=1.0, log_scale=True, output_file=None):
     """
     Generates a line plot showing how runtime scales with domain size.
     """
@@ -195,7 +195,7 @@ def plot_scaling(csv_path, prefix, suffix=None, algorithms=None, min_size=None, 
 
     # Plotting
     plt.figure(figsize=(10, 6))
-    sns.set_theme(style="whitegrid")
+    sns.set_theme(style="whitegrid", font_scale=font_scale)
 
     ax = sns.lineplot(
         data=df_agg,
@@ -239,7 +239,7 @@ def plot_scaling(csv_path, prefix, suffix=None, algorithms=None, min_size=None, 
         plt.show()
 
 
-def plot_cactus(csv_path, algorithms=None, timeout=None, legend_loc=None, log_scale=True, output_file=None):
+def plot_cactus(csv_path, algorithms=None, timeout=None, legend_loc=None, font_scale=1.0, log_scale=True, output_file=None):
     """
     Generates a Cactus Plot:
     X-axis: Number of solved instances (cumulative)
@@ -288,7 +288,7 @@ def plot_cactus(csv_path, algorithms=None, timeout=None, legend_loc=None, log_sc
 
     # Plotting
     plt.figure(figsize=(10, 6))
-    sns.set_theme(style="whitegrid")
+    sns.set_theme(style="whitegrid", font_scale=font_scale)
 
     # Use lineplot without markers usually, but markers help see distinct problems
     ax = sns.lineplot(
@@ -335,6 +335,7 @@ def main():
         p.add_argument("-a", "--algos", nargs="+", help="List of algorithms to include")
         p.add_argument("--linear", action="store_true", help="Use linear scale instead of log scale")
         p.add_argument("--legend", default="upper right", help="Position of the legend per matplotlib specification")
+        p.add_argument("--font-scale", type=float, default=1.5, help="Scale factor for all text (1.5 = 50% bigger)")
 
     # Subcommand: comparison (Bar Chart)
     parser_comp = subparsers.add_parser("bar", help="Generate grouped bar chart for multiple problems")
@@ -367,6 +368,7 @@ def main():
             algorithms=args.algos,
             sort_by_algo=args.sort_by,
             legend_loc=args.legend,
+            font_scale=args.font_scale,
             log_scale=use_log_scale, 
             output_file=args.output
         )
@@ -380,6 +382,7 @@ def main():
             max_size=args.max,
             xticks=args.xticks,
             legend_loc=args.legend,
+            font_scale=args.font_scale,
             log_scale=use_log_scale, 
             output_file=args.output
         )
@@ -389,6 +392,7 @@ def main():
             algorithms=args.algos,
             timeout=args.timeout,
             legend_loc=args.legend,
+            font_scale=args.font_scale,
             log_scale=use_log_scale,
             output_file=args.output
         )
